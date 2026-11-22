@@ -12,6 +12,40 @@ Dentro do propio aplicativo hai un botón **"❓ Axuda"** (arriba do panel de ed
 
 ---
 
+## Asistente completo (v1.6)
+
+O botón **🧭 Asistente completo (paso a paso)** guía en 8 pasos: 1 Datos, 2 Formatos, 3 Tema da ilustración, 4 Aspecto, 5 Prompt, 6 Carga da imaxe, 7 Revisión e 8 Descarga.
+
+- **Formatos:** escolles entre cadrado, story e X. **Moodle e carrusel inclúense sempre.** Só se piden as ilustracións necesarias (a vertical só se escolles cadrado ou story).
+- **Abertura:** ábrese só ao comezar cunha actividade sen datos (tamén con «Nova actividade»). Se hai datos gardados non se abre: aparece **▶ Continuar onde o deixei**.
+- **Modo experto:** «Pasar ao modo experto» (no propio asistente) evita a apertura automática. O panel de edición segue sendo o modo experto, sen cambios.
+- **Descarga do asistente:** só os formatos escollidos (PNG individuais, ZIP e PDF) máis a copia .json. Os botóns do panel seguen descargando os 5 formatos.
+- A elección de formatos gárdase coa actividade (e vai no .json).
+
+---
+
+## Lugar, horario e datas (v1.7)
+
+Funciona igual no asistente completo e no panel experto.
+
+- **Lugar:** «CFR de Vigo» como suxestión (editable). Tamén ao premer «Nova actividade».
+- **Horario:** suxestión «De 16:30 a 20:30 horas»; botóns rápidos 16:30–19:30, 16:30–20:30 e 17:00–20:00; selectores de hora de 15 en 15 minutos (avisa se a hora de fin non é posterior á de inicio).
+- **Datas:** calendario con dous modos. *Datas soltas*: «30/09 - 07/10 - 14/10 de 2026». *Intervalo*: «Do 30/09 ao 22/10 de 2026». Se cruza de ano, o ano vai en cada data («30/12/2026 - 13/01/2027»).
+- O campo de texto segue editable a man; se escribes un texto distinto dos formatos anteriores, o calendario non o interpreta.
+
+---
+
+## Como está organizado o panel de edición (modo experto)
+
+- **🪄 Só o asistente de ilustración**: botón arriba do panel (e tamén na sección 2), para crear a ilustración paso a paso.
+- **💾 Copia da actividade (.json)**: sección plegable arriba do panel.
+- **1. Datos do cartel**: código, título, relatores, lugar, datas, horario, aliñamento e cor de acento.
+- **2. Ilustración**: prompts para a IA e carga das imaxes.
+- **3. Descargar**: os botóns están debaixo da vista previa; hai un botón que leva ata eles.
+- **Axustes avanzados** (seccións plegables, pechadas por defecto; lembran se as abres): patrón de colocación, axuste da ilustración, imaxe para o carrusel, banner Moodle, textos para as redes e logos.
+
+---
+
 ## 1. Formatos dispoñibles
 
 | Formato | Tamaño por defecto | Uso |
@@ -160,7 +194,7 @@ Antes de exportar, se falta a ilustración horizontal (necesaria tamén para o c
 - As **preferencias** (cor de acento, aliñamento, logos) gárdanse á parte do **borrador** (os datos concretos da actividade) — así podes limpar unha actividade sen perder a túa configuración habitual.
 - **⬇ Exportar / ⬆ Importar actividade (.json)**: copia de seguridade ou traslado a outro ordenador ou persoa. Inclúe texto, patróns, axustes, cores e opcións do carrusel; coa caixa «Incluír ilustracións e logos» marcada, tamén as imaxes (o ficheiro pesa máis). Importar substitúe a actividade actual, tras confirmación; se o ficheiro non trae ilustracións, mantéñense as cargadas.
 - **Textos para as redes**: xera un texto alternativo e un texto de publicación a partir dos datos do cartel (código, título, persoas relatoras, lugar, datas e horario), editables e con botón de copiar. Non describen a ilustración.
-- **Versión**: o número (agora v1.4) aparece ao final do panel de edición e na axuda. Para cambialo, edítase a constante `APP_VERSION` no código.
+- **Versión**: o número (agora v1.7) aparece ao final do panel de edición e na axuda. Para cambialo, edítase a constante `APP_VERSION` no código.
 - **Aviso de garda**: o texto e as ilustracións gárdanse por separado. Se as imaxes non caben no almacenamento do navegador, aparece un aviso e o texto gárdase igual. Ao estar a ferramenta publicada, a garda é **por navegador e por enderezo**: non se comparte entre ordenadores; para iso serve o .json.
 - **🗑️ Nova actividade**: limpa código, título, ponentes, lugar, datas, horario, ilustracións e patróns, para empezar unha actividade nova de cero. Pide confirmación antes de borrar. A cor de acento, o aliñamento e os logos cargados **non** se ven afectados.
 

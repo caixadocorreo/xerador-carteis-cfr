@@ -492,6 +492,23 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   }
   textarea{min-height:60px;}
   .hint{font-size:11.5px;color:#8a94a3;margin-top:3px;line-height:1.4;}
+  .pk{border:1px solid var(--gris-borde);border-radius:8px;background:#f8fafc;padding:8px;margin-top:6px;}
+  .pk-row{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin:4px 0;}
+  .pk button{width:auto;margin:0;padding:5px 9px;font-size:12px;background:#eef1f5;color:#1a202c;border:1px solid var(--gris-borde);}
+  .pk button:hover{background:#e2e6ec;}
+  .pk button.on{background:var(--azul);color:#fff;border-color:var(--azul);}
+  .pk select{width:auto;flex:0 0 auto;padding:5px 6px;font-size:12.5px;}
+  .pk-mode label{display:inline-flex;gap:4px;align-items:center;font-weight:500;font-size:12.5px;margin:0 8px 0 0;}
+  .pk-mode input{margin:0;}
+  .cal-head{display:flex;align-items:center;justify-content:space-between;margin:4px 0;}
+  .cal-title{font-size:13px;font-weight:700;color:var(--azul-escuro);}
+  .cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;}
+  .cal-grid .cal-dow{font-size:10.5px;color:#6b7686;text-align:center;font-weight:600;padding:2px 0;}
+  .pk .cal-day{padding:5px 0;width:100%;font-weight:500;background:#fff;}
+  .pk .cal-day.in{background:#d6e9f6;border-color:#b8d6ec;}
+  .pk .cal-day.on{background:var(--azul);color:#fff;}
+  .pk .cal-day.empty{visibility:hidden;}
+  .pk-warn{font-size:11.5px;color:#b45309;font-weight:600;}
   .file-row{display:flex;gap:6px;align-items:center;margin-top:4px;}
   input[type=file]{font-size:12px;flex:1;}
   input[type=color]{
@@ -519,6 +536,13 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   .btn-secondary:hover{background:#e2e6ec;}
   .btn-small{background:var(--azul);color:#fff;font-size:11.5px;padding:4px 9px;}
   textarea#out-img-prompt-h, textarea#out-img-prompt-v{min-height:130px;font-size:12px;font-family:monospace;}
+
+  /* ---------- SECCIÓNS PLEGABLES (axustes avanzados) ---------- */
+  details.acc{border:1px solid var(--gris-borde);border-radius:8px;margin:8px 0;background:#fff;}
+  details.acc > summary{cursor:pointer;padding:9px 12px;font-weight:700;font-size:13px;color:var(--azul-escuro);text-transform:uppercase;letter-spacing:.02em;}
+  details.acc[open] > summary{border-bottom:1px solid var(--gris-borde);}
+  details.acc > .acc-body{padding:2px 12px 12px;}
+  details.acc .acc-body > label:first-child{margin-top:8px;}
 
   /* ---------- ASISTENTE DE ILUSTRACIÓN ---------- */
   .wiz-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-top:1px solid var(--gris-borde);flex-shrink:0;}
@@ -880,13 +904,20 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   <aside class="editor">
     <button id="btn-help-open" class="help-btn" type="button">❓ Axuda</button>
     <button id="btn-new-activity" class="help-btn" type="button">🗑️ Nova actividade</button>
+    <button class="btn-primary" id="btn-asi-open" type="button" style="margin:0 0 6px;">🧭 Asistente completo (paso a paso)</button>
+    <div class="hint" style="margin-bottom:8px;">Guíate dende os datos ata a descarga. Este panel é o modo experto.</div>
+    <div id="wiz-resume" class="hint" style="display:none;margin-bottom:8px;"><button class="btn-secondary" id="btn-wiz-resume" type="button" style="margin:0;">▶ Continuar onde o deixei</button> <span id="wiz-resume-step"></span></div>
+    <button class="help-btn" id="btn-wizard-open-top" type="button" style="margin:0 0 6px;">🪄 Só o asistente de ilustración</button>
+    <div style="margin-bottom:10px;"></div>
     <div class="hint" id="autosave-hint" style="display:none;margin-bottom:10px;">Borrador gardado automaticamente neste navegador.</div>
+<details class="acc" id="acc-json"><summary>💾 Copia da actividade (.json)</summary><div class="acc-body">
     <button id="btn-export-json" class="help-btn" type="button">⬇ Exportar actividade (.json)</button>
     <label style="display:flex;gap:8px;align-items:center;font-weight:500;margin:6px 0;"><input type="checkbox" id="chk-export-imgs" checked style="margin:0;"> Incluír ilustracións e logos</label>
     <button id="btn-import-json" class="help-btn" type="button">⬆ Importar actividade (.json)</button>
     <input type="file" id="in-import-json" accept=".json,application/json" style="display:none;">
     <div class="hint" style="margin-bottom:14px;">Copia de seguridade ou traslado a outro ordenador.</div>
-    <h2>Datos do cartel</h2>
+</div></details>
+    <h2>1. Datos do cartel</h2>
 
     <label>Código da actividade</label>
     <input type="text" id="in-codigo" placeholder="V2601030">
@@ -920,71 +951,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
     </div>
     <div class="hint">Por defecto úsase o azul institucional da Xunta, rgb(0, 123, 196), para todas as modalidades. Cámbiao aquí só se precisas outra cor puntual (admite formato rgb(...) ou hex #rrggbb).</div>
 
-    <h2>Patrón de colocación</h2>
-    <div class="hint">Cada formato ten o seu propio patrón, independente dos outros dous.</div>
-    <label>Cadrado (IG feed)</label>
-    <select id="in-layout-square"></select>
-    <label>Story (IG/vertical)</label>
-    <select id="in-layout-story"></select>
-    <label>X / Twitter</label>
-    <select id="in-layout-xformat"></select>
-
-    <h2>Axuste da ilustración</h2>
-    <div class="hint">«Recortar» enche a zona e pode cortar os bordos; «Encaixar completa» móstraa enteira, sen cortar (as franxas quedan en branco). A descarga sae igual que a vista previa. Con «posición libre» (cadrado e story), arrastra a imaxe sobre a vista previa para colocala.</div>
-    <label>Cadrado (IG feed)</label>
-    <select id="in-fit-square">
-      <option value="cover-top">Recortar — posición arriba</option>
-      <option value="cover-center">Recortar — posición centro</option>
-      <option value="cover-bottom">Recortar — posición abaixo</option>
-      <option value="cover-free">Recortar — posición libre (arrastrar)</option>
-      <option value="contain">Encaixar completa (sen cortar)</option>
-    </select>
-    <label>Story (IG/vertical)</label>
-    <select id="in-fit-story">
-      <option value="cover-center">Recortar — posición centro</option>
-      <option value="cover-top">Recortar — posición arriba</option>
-      <option value="cover-bottom">Recortar — posición abaixo</option>
-      <option value="cover-free">Recortar — posición libre (arrastrar)</option>
-      <option value="contain">Encaixar completa (sen cortar)</option>
-    </select>
-    <label>X / Twitter</label>
-    <select id="in-fit-xformat">
-      <option value="contain">Encaixar completa (sen cortar)</option>
-      <option value="cover-center">Recortar (enche a zona)</option>
-    </select>
-    <label>Moodle (etiqueta)</label>
-    <select id="in-fit-moodle">
-      <option value="contain">Encaixar completa (sen cortar)</option>
-      <option value="cover-center">Recortar (enche a zona)</option>
-    </select>
-
-    <h2>Banner Moodle (etiqueta)</h2>
-    <div class="hint">Non hai un tamaño único estándar en Moodle — depende do tema visual da túa Aula Virtual. Proponse 1600×400px (relación 4:1) por defecto; cámbiao se coñeces a medida exacta do teu curso.</div>
-    <label>Ancho (px)</label>
-    <input type="text" id="in-moodle-w" value="1600">
-    <label>Alto (px)</label>
-    <input type="text" id="in-moodle-h" value="400">
-
-    <h2>Imaxe para o carrusel</h2>
-    <div class="hint">Só ilustración (sen texto nin logos), 1600×900 px (16:9), sobre fondo branco. Usa a ilustración horizontal. Non depende do código, título, datas nin relatores: a ficha do carrusel ten a súa propia lóxica.</div>
-    <label>Marxe de seguridade (%)</label>
-    <input type="text" id="in-carrusel-margin" value="0">
-    <div class="hint">0 = a ilustración ocupa todo o lenzo, sen cortar nada. Máximo 20.</div>
-    <label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" id="in-carrusel-fade" checked style="margin:0;"> Fundir bordos con branco</label>
-    <div class="hint">Suaviza os bordos para que non se note un rectángulo se a ilustración non é branca nos extremos.</div>
-    <label>Formato do ficheiro</label>
-    <select id="in-carrusel-format">
-      <option value="png">PNG</option>
-      <option value="jpg">JPG (90 %, máis lixeiro)</option>
-    </select>
-    <label>Cor para a columna K («CorFondo»)</label>
-    <div class="carrusel-hex-row">
-      <input type="text" id="out-carrusel-hex" readonly>
-      <button class="btn-small" id="btn-copy-hex" type="button">Copiar</button>
-    </div>
-    <div class="hint" id="carrusel-contrast-info">Sae da cor de acento do cartel.</div>
-
-    <h2>Ilustración</h2>
+    <h2>2. Ilustración</h2>
     <button class="btn-primary" id="btn-wizard-open" type="button">🪄 Asistente de ilustración</button>
     <div class="hint" style="margin-bottom:10px;">Axuda paso a paso para crear o prompt e comprobar a imaxe, sen coñecementos de deseño.</div>
     <div class="hint">Precísanse dúas imaxes: unha horizontal (para X e Moodle) e outra vertical (para cadrado e story). Xéranse á parte (ex. con IA) e cárganse cada unha no seu campo.</div>
@@ -1077,7 +1044,81 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 
     <button class="btn-secondary" id="btn-copy-both-prompts" type="button" style="display:none;margin-top:8px;">Copiar os dous prompts xuntos</button>
 
-    <h2>Textos para as redes</h2>
+    <h2>3. Descargar</h2>
+    <div class="hint">Os botóns de descarga (PNG, ZIP e PDF) están debaixo da vista previa.</div>
+    <button class="btn-secondary" id="btn-goto-export" type="button">⬇ Ir aos botóns de descarga</button>
+
+    <h2>Axustes avanzados</h2>
+    <div class="hint" style="margin-bottom:6px;">Só fan falta se queres afinar o resultado.</div>
+<details class="acc" id="acc-patrons"><summary>Patrón de colocación</summary><div class="acc-body">
+    <div class="hint">Cada formato ten o seu propio patrón, independente dos outros dous.</div>
+    <label>Cadrado (IG feed)</label>
+    <select id="in-layout-square"></select>
+    <label>Story (IG/vertical)</label>
+    <select id="in-layout-story"></select>
+    <label>X / Twitter</label>
+    <select id="in-layout-xformat"></select>
+
+</div></details>
+<details class="acc" id="acc-axuste"><summary>Axuste da ilustración</summary><div class="acc-body">
+    <div class="hint">«Recortar» enche a zona e pode cortar os bordos; «Encaixar completa» móstraa enteira, sen cortar (as franxas quedan en branco). A descarga sae igual que a vista previa. Con «posición libre» (cadrado e story), arrastra a imaxe sobre a vista previa para colocala.</div>
+    <label>Cadrado (IG feed)</label>
+    <select id="in-fit-square">
+      <option value="cover-top">Recortar — posición arriba</option>
+      <option value="cover-center">Recortar — posición centro</option>
+      <option value="cover-bottom">Recortar — posición abaixo</option>
+      <option value="cover-free">Recortar — posición libre (arrastrar)</option>
+      <option value="contain">Encaixar completa (sen cortar)</option>
+    </select>
+    <label>Story (IG/vertical)</label>
+    <select id="in-fit-story">
+      <option value="cover-center">Recortar — posición centro</option>
+      <option value="cover-top">Recortar — posición arriba</option>
+      <option value="cover-bottom">Recortar — posición abaixo</option>
+      <option value="cover-free">Recortar — posición libre (arrastrar)</option>
+      <option value="contain">Encaixar completa (sen cortar)</option>
+    </select>
+    <label>X / Twitter</label>
+    <select id="in-fit-xformat">
+      <option value="contain">Encaixar completa (sen cortar)</option>
+      <option value="cover-center">Recortar (enche a zona)</option>
+    </select>
+    <label>Moodle (etiqueta)</label>
+    <select id="in-fit-moodle">
+      <option value="contain">Encaixar completa (sen cortar)</option>
+      <option value="cover-center">Recortar (enche a zona)</option>
+    </select>
+
+</div></details>
+<details class="acc" id="acc-carrusel"><summary>Imaxe para o carrusel</summary><div class="acc-body">
+    <div class="hint">Só ilustración (sen texto nin logos), 1600×900 px (16:9), sobre fondo branco. Usa a ilustración horizontal. Non depende do código, título, datas nin relatores: a ficha do carrusel ten a súa propia lóxica.</div>
+    <label>Marxe de seguridade (%)</label>
+    <input type="text" id="in-carrusel-margin" value="0">
+    <div class="hint">0 = a ilustración ocupa todo o lenzo, sen cortar nada. Máximo 20.</div>
+    <label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" id="in-carrusel-fade" checked style="margin:0;"> Fundir bordos con branco</label>
+    <div class="hint">Suaviza os bordos para que non se note un rectángulo se a ilustración non é branca nos extremos.</div>
+    <label>Formato do ficheiro</label>
+    <select id="in-carrusel-format">
+      <option value="png">PNG</option>
+      <option value="jpg">JPG (90 %, máis lixeiro)</option>
+    </select>
+    <label>Cor para a columna K («CorFondo»)</label>
+    <div class="carrusel-hex-row">
+      <input type="text" id="out-carrusel-hex" readonly>
+      <button class="btn-small" id="btn-copy-hex" type="button">Copiar</button>
+    </div>
+    <div class="hint" id="carrusel-contrast-info">Sae da cor de acento do cartel.</div>
+
+</div></details>
+<details class="acc" id="acc-moodle"><summary>Banner Moodle (etiqueta)</summary><div class="acc-body">
+    <div class="hint">Non hai un tamaño único estándar en Moodle — depende do tema visual da túa Aula Virtual. Proponse 1600×400px (relación 4:1) por defecto; cámbiao se coñeces a medida exacta do teu curso.</div>
+    <label>Ancho (px)</label>
+    <input type="text" id="in-moodle-w" value="1600">
+    <label>Alto (px)</label>
+    <input type="text" id="in-moodle-h" value="400">
+
+</div></details>
+<details class="acc" id="acc-textos"><summary>Textos para as redes</summary><div class="acc-body">
     <div class="hint">Borradores feitos só cos datos do cartel (código, título, persoas relatoras, lugar, datas e horario). Non describen a ilustración: se queres, engádeo ti no texto alternativo. Pódense editar antes de copiar.</div>
     <button class="btn-secondary" id="btn-gen-alt" type="button">Xerar texto alternativo</button>
     <textarea id="out-alt" style="display:none;"></textarea>
@@ -1086,13 +1127,15 @@ https://github.com/nodeca/pako/blob/main/LICENSE
     <textarea id="out-post" style="display:none;"></textarea>
     <button class="btn-secondary" id="btn-copy-post" type="button" style="display:none;">Copiar texto da publicación</button>
 
-    <h2>Logos (opcional)</h2>
+</div></details>
+<details class="acc" id="acc-logos"><summary>Logos (opcional)</summary><div class="acc-body">
     <label>Logo Xunta / CFR</label>
     <div class="file-row"><input type="file" id="in-logo1" accept="image/*"></div>
     <label>Logo Xacobeo / segundo logo</label>
     <div class="file-row"><input type="file" id="in-logo2" accept="image/*"></div>
     <div class="hint">Xa veñen cargados os logos oficiais (Xunta de Galicia e Xacobeo 2027, versión branca). Só cambia isto se necesitas outros.</div>
 
+</div></details>
       <div class="hint" id="app-version" style="margin:22px 0 4px;text-align:center;"></div>
   </aside>
 
@@ -1145,12 +1188,12 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 <div id="wiz-overlay" class="help-overlay" style="display:none;">
   <div class="help-modal">
     <div class="help-modal-header">
-      <h2>Asistente de ilustración</h2>
+      <h2 id="wiz-title">Asistente de ilustración</h2>
       <button id="btn-wiz-close" class="help-close" type="button" aria-label="Pechar">✕</button>
     </div>
     <div class="help-modal-body" id="wiz-body"></div>
     <div class="wiz-footer">
-      <span id="wiz-step-label" class="wiz-body-note"></span>
+      <span><span id="wiz-step-label" class="wiz-body-note"></span> <button id="btn-wiz-expert" class="btn-secondary wiz-btn" type="button" style="display:none;margin:0 0 0 8px;">Pasar ao modo experto</button></span>
       <div>
         <button id="btn-wiz-prev" class="btn-secondary wiz-btn" type="button">Anterior</button>
         <button id="btn-wiz-next" class="btn-primary wiz-btn" type="button">Seguinte</button>
@@ -1160,7 +1203,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 </div>
 
 <div id="wiz-bar" class="wiz-bar">
-  <div class="wiz-bar-title">Asistente de ilustración — revisando o resultado</div>
+  <div class="wiz-bar-title">Asistente — revisando o resultado</div>
   <div class="wiz-chips" id="wiz-bar-chips" style="margin:0;"></div>
   <div class="wiz-bar-row">
     <button class="btn-secondary" id="btn-wiz-bar-close" type="button">Pechar</button>
@@ -1175,6 +1218,20 @@ https://github.com/nodeca/pako/blob/main/LICENSE
       <button id="btn-help-close" class="help-close" type="button" aria-label="Pechar">✕</button>
     </div>
     <div class="help-modal-body">
+
+      <h3>0. Asistente completo e modo experto</h3>
+      <p>O botón <strong>🧭 Asistente completo</strong> guía en 8 pasos: datos, formatos (cadrado, story e X; Moodle e carrusel van sempre incluídos), ilustración, revisión e descarga. Ábrese só ao comezar unha actividade sen datos. Se pechas a páxina a medias, o botón <strong>▶ Continuar onde o deixei</strong> retoma o paso. <strong>Pasar ao modo experto</strong> deixa de abrilo automaticamente: o panel de edición é o modo experto e funciona como sempre.</p>
+      <h3>Lugar, horario e datas</h3>
+      <p>O lugar vén sugerido como «CFR de Vigo» e o horario como «De 16:30 a 20:30 horas» (cámbiaos se fai falla). Para o horario hai botóns rápidos (16:30 a 19:30, 16:30 a 20:30, 17:00 a 20:00) e selectores de hora de 15 en 15 minutos. Para as datas hai un calendario: en <strong>Datas soltas</strong> premes cada día («30/09 - 07/10 de 2026») e en <strong>Intervalo</strong> escolles inicio e fin («Do 30/09 ao 22/10 de 2026»). Se cruza de ano, escríbese o ano en cada data. O campo de texto segue sendo editable a man.</p>
+      <h3>Como está organizado o panel (modo experto)</h3>
+      <ul>
+        <li><strong>🪄 Só o asistente de ilustración</strong>: botón arriba do panel, para crear só a ilustración paso a paso.</li>
+        <li><strong>1. Datos do cartel</strong>: código, título, relatores, lugar, datas, horario, aliñamento e cor de acento.</li>
+        <li><strong>2. Ilustración</strong>: prompts para a IA e carga das imaxes.</li>
+        <li><strong>3. Descargar</strong>: os botóns de descarga están debaixo da vista previa (hai un botón que leva ata eles).</li>
+        <li><strong>Axustes avanzados</strong> (seccións plegables, pechadas por defecto; lembran se as abres): patrón de colocación, axuste da ilustración, imaxe para o carrusel, banner Moodle, textos para as redes e logos.</li>
+        <li><strong>💾 Copia da actividade (.json)</strong>: plegable, arriba do panel.</li>
+      </ul>
 
       <h3>1. Formatos dispoñibles</h3>
       <ul>
@@ -1338,7 +1395,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 
 <script>
 // Versión da aplicación: cambiar este número en cada actualización publicada.
-const APP_VERSION = 'v1.4';
+const APP_VERSION = 'v1.7';
 
 const FORMATS = [
   {key:'square', cls:'square', w:1080, h:1080, label:'IG-cadrado'},
@@ -1432,6 +1489,7 @@ function fitTitle(node, fmt){
 }
 
 let state = {
+  fmtSel:{square:true, story:true, xformat:true},
   codigo:'V2601030',
   titulo:'Saúde mental e benestar na aula',
   ponentes:'Jeniffer L. Herbón Otero\nBoas prácticas de centro:\n- Marilú Bangueses Pereiras\n- Óscar Prego Boente',
@@ -2347,6 +2405,7 @@ function getDraftData(withImages){
     datas: $('#in-datas').value,
     horario: $('#in-horario').value,
     layouts: state.layouts,
+    fmtSel: state.fmtSel,
     fit: state.fit,
     focus: state.focus,
     elementos: $('#in-img-elementos').value,
@@ -2425,6 +2484,7 @@ const persistAllDebounced = debounce(persistAll, 500);
       if(d.datas != null) state.datas = d.datas;
       if(d.horario != null) state.horario = d.horario;
       if(d.layouts) state.layouts = Object.assign({}, state.layouts, d.layouts);
+      if(d.fmtSel && typeof d.fmtSel === 'object'){ ['square','story','xformat'].forEach(k=>{ if(typeof d.fmtSel[k] === 'boolean') state.fmtSel[k] = d.fmtSel[k]; }); }
       if(d.fit) state.fit = Object.assign({}, state.fit, d.fit);
       if(d.focus){
         state.focus = {
@@ -2525,21 +2585,23 @@ $('#btn-new-activity').addEventListener('click', ()=>{
   state.codigo = '';
   state.titulo = '';
   state.ponentes = '';
-  state.lugar = '';
+  state.lugar = DEFAULT_LUGAR;
   state.datas = '';
-  state.horario = '';
+  state.horario = DEFAULT_HORARIO;
   state.imgSrcH = null;
   state.imgSrcV = null;
   state.layouts = {square:'standard', story:'standard', xformat:'side'};
+  state.fmtSel = {square:true, story:true, xformat:true};
   state.fit = {square:'cover-top', story:'cover-center', xformat:'contain', moodle:'contain'};
   state.focus = {square:{x:50,y:0}, story:{x:50,y:50}};
   ['square','story','xformat','moodle'].forEach(k=>{ const sf = document.getElementById('in-fit-' + k); if(sf) sf.value = state.fit[k]; });
   $('#in-codigo').value = '';
   $('#in-titulo').value = '';
   $('#in-ponentes').value = '';
-  $('#in-lugar').value = '';
+  $('#in-lugar').value = DEFAULT_LUGAR;
   $('#in-datas').value = '';
-  $('#in-horario').value = '';
+  $('#in-horario').value = DEFAULT_HORARIO;
+  pkFire($('#in-datas')); pkFire($('#in-horario'));
   $('#in-img-elementos').value = '';
   $('#in-img-color').value = '';
   $('#in-img-h').value = '';
@@ -2560,7 +2622,10 @@ $('#btn-new-activity').addEventListener('click', ()=>{
   });
   safeLocalStorageRemove(LS_DRAFT_KEY);
   safeLocalStorageRemove(LS_IMGS_KEY);
+  safeLocalStorageRemove(LS_WIZ_KEY);
   renderStage();
+  updateResumeBanner();
+  openFullWizard(1);
 });
 
 
@@ -2618,6 +2683,8 @@ function applyImportedActivity(obj){
     if(d.fit) setSelectIfValid(sel, d.fit[k]);
     state.fit[k] = sel.value;
   });
+  state.fmtSel = {square:true, story:true, xformat:true};
+  if(d.fmtSel && typeof d.fmtSel === 'object'){ ['square','story','xformat'].forEach(k=>{ if(typeof d.fmtSel[k] === 'boolean') state.fmtSel[k] = d.fmtSel[k]; }); }
   state.focus = {square:{x:50,y:0}, story:{x:50,y:50}};
   if(d.focus){
     ['square','story'].forEach(k=>{
@@ -2742,18 +2809,168 @@ $('#btn-copy-alt').addEventListener('click', ()=> copyTextFrom('#out-alt', '#btn
 $('#btn-copy-post').addEventListener('click', ()=> copyTextFrom('#out-post', '#btn-copy-post'));
 
 
+// ---------- Selectores de horario e de datas (calendario) ----------
+// Escriben no campo de texto de destino (que segue sendo editable a man).
+const HORARIOS_RAPIDOS = [['16:30','19:30'],['16:30','20:30'],['17:00','20:00']];
+const MESES_GL = ['xaneiro','febreiro','marzo','abril','maio','xuño','xullo','agosto','setembro','outubro','novembro','decembro'];
+function pad2(n){ return String(n).padStart(2, '0'); }
+let pkOwn = null; // evita que un selector se resincronice co texto que acaba de escribir
+function pkFire(target){ pkOwn = target; try{ target.dispatchEvent(new Event('input', {bubbles: true})); } finally { pkOwn = null; } }
+
+function makeHorarioPicker(target){
+  const box = document.createElement('div'); box.className = 'pk';
+  const chips = document.createElement('div'); chips.className = 'pk-row';
+  const row = document.createElement('div'); row.className = 'pk-row';
+  const warn = document.createElement('div'); warn.className = 'pk-warn';
+  const opts = ['<option value="">--:--</option>'];
+  for(let h = 6; h <= 23; h++) for(let m = 0; m < 60; m += 15) opts.push(`<option value="${pad2(h)}:${pad2(m)}">${pad2(h)}:${pad2(m)}</option>`);
+  row.innerHTML = 'De <select class="pk-ini" aria-label="Hora de inicio">' + opts.join('') + '</select> a <select class="pk-fin" aria-label="Hora de fin">' + opts.join('') + '</select>';
+  const ini = row.querySelector('.pk-ini'), fin = row.querySelector('.pk-fin');
+  const btns = HORARIOS_RAPIDOS.map(([a, b])=>{
+    const bt = document.createElement('button'); bt.type = 'button'; bt.textContent = `${a} a ${b}`;
+    bt.addEventListener('click', ()=>{ ini.value = a; fin.value = b; write(); });
+    chips.appendChild(bt); return [bt, a, b];
+  });
+  function refresh(){
+    btns.forEach(([bt, a, b])=> bt.classList.toggle('on', ini.value === a && fin.value === b));
+    warn.textContent = (ini.value && fin.value && fin.value <= ini.value) ? 'A hora de fin é anterior ou igual á de inicio.' : '';
+  }
+  function write(){
+    refresh();
+    if(!ini.value || !fin.value) return;
+    target.value = `De ${ini.value} a ${fin.value} horas`;
+    pkFire(target);
+  }
+  function sync(){
+    if(pkOwn === target) return;
+    const m = /^De (\d{2}:\d{2}) a (\d{2}:\d{2}) horas$/.exec((target.value || '').trim());
+    ini.value = m ? m[1] : ''; fin.value = m ? m[2] : '';
+    if(m && (ini.value !== m[1] || fin.value !== m[2])){ ini.value = ''; fin.value = ''; }
+    refresh();
+  }
+  ini.addEventListener('change', write); fin.addEventListener('change', write);
+  target.addEventListener('input', sync);
+  box.appendChild(chips); box.appendChild(row); box.appendChild(warn);
+  sync();
+  return box;
+}
+
+function makeDatesPicker(target){
+  const box = document.createElement('div'); box.className = 'pk';
+  const uid = 'pkm' + Math.random().toString(36).slice(2, 8);
+  box.innerHTML = `<div class="pk-row pk-mode"><label><input type="radio" name="${uid}" value="loose" checked> Datas soltas</label><label><input type="radio" name="${uid}" value="range"> Intervalo</label></div>
+    <div class="cal-head"><button type="button" class="cal-prev" aria-label="Mes anterior">‹</button><span class="cal-title"></span><button type="button" class="cal-next" aria-label="Mes seguinte">›</button></div>
+    <div class="cal-grid"></div>
+    <div class="pk-row"><button type="button" class="cal-clear">Limpar datas</button><span class="hint cal-hint" style="margin:0;"></span></div>`;
+  let mode = 'loose';
+  let sel = [];            // datas soltas: ['YYYY-MM-DD']
+  let rng = {a: null, b: null};
+  const t0 = new Date();
+  let view = {y: t0.getFullYear(), m: t0.getMonth()};
+  const grid = box.querySelector('.cal-grid'), title = box.querySelector('.cal-title'), hint = box.querySelector('.cal-hint');
+  const key = (y, m, d) => `${y}-${pad2(m + 1)}-${pad2(d)}`;
+  const validDate = (y, m, d) => { const x = new Date(y, m, d); return x.getFullYear() === y && x.getMonth() === m && x.getDate() === d; };
+  function fmt(k, withYear){ const [y, m, d] = k.split('-'); return `${d}/${m}` + (withYear ? '/' + y : ''); }
+  function textFor(){
+    if(mode === 'loose'){
+      const v = [...sel].sort();
+      if(!v.length) return '';
+      const years = new Set(v.map(k => k.slice(0, 4)));
+      if(years.size === 1) return v.map(k => fmt(k, false)).join(' - ') + ' de ' + v[0].slice(0, 4);
+      return v.map(k => fmt(k, true)).join(' - ');
+    }
+    if(!rng.a || !rng.b) return null;
+    const [a, b] = rng.a <= rng.b ? [rng.a, rng.b] : [rng.b, rng.a];
+    if(a.slice(0, 4) === b.slice(0, 4)) return `Do ${fmt(a, false)} ao ${fmt(b, false)} de ${a.slice(0, 4)}`;
+    return `Do ${fmt(a, true)} ao ${fmt(b, true)}`;
+  }
+  function write(){
+    const t = textFor();
+    if(t === null) return;
+    target.value = t; pkFire(target);
+  }
+  function parseKey(txt, defYear){
+    const m = /^(\d{2})\/(\d{2})(?:\/(\d{4}))?$/.exec(txt.trim());
+    if(!m) return null;
+    const y = m[3] ? +m[3] : defYear, mo = +m[2] - 1, d = +m[1];
+    if(!y || !validDate(y, mo, d)) return null;
+    return key(y, mo, d);
+  }
+  function sync(){
+    if(pkOwn === target) return;
+    const raw = (target.value || '').trim();
+    sel = []; rng = {a: null, b: null};
+    let r = /^Do (\d{2}\/\d{2}(?:\/\d{4})?) ao (\d{2}\/\d{2}(?:\/\d{4})?)(?: de (\d{4}))?$/.exec(raw);
+    if(r){
+      const a = parseKey(r[1], r[3] ? +r[3] : 0), b = parseKey(r[2], r[3] ? +r[3] : 0);
+      if(a && b){ mode = 'range'; rng = {a, b}; box.querySelector('input[value=range]').checked = true; view = {y: +a.slice(0, 4), m: +a.slice(5, 7) - 1}; }
+    } else if(raw){
+      const dm = /^(.*?)(?: de (\d{4}))?$/.exec(raw);
+      const parts = dm[1].split(' - ');
+      const ks = parts.map(x => parseKey(x, dm[2] ? +dm[2] : 0));
+      if(ks.length && ks.every(Boolean)){ mode = 'loose'; sel = ks; box.querySelector('input[value=loose]').checked = true; view = {y: +ks[0].slice(0, 4), m: +ks[0].slice(5, 7) - 1}; }
+    }
+    draw();
+  }
+  function draw(){
+    title.textContent = `${MESES_GL[view.m]} de ${view.y}`;
+    grid.innerHTML = '';
+    ['L','M','M','X','V','S','D'].forEach(x => { const e = document.createElement('div'); e.className = 'cal-dow'; e.textContent = x; grid.appendChild(e); });
+    const first = (new Date(view.y, view.m, 1).getDay() + 6) % 7; // luns = 0
+    const days = new Date(view.y, view.m + 1, 0).getDate();
+    for(let i = 0; i < first; i++){ const e = document.createElement('button'); e.type = 'button'; e.className = 'cal-day empty'; e.tabIndex = -1; grid.appendChild(e); }
+    const lo = rng.a && rng.b ? (rng.a <= rng.b ? rng.a : rng.b) : rng.a;
+    const hi = rng.a && rng.b ? (rng.a <= rng.b ? rng.b : rng.a) : rng.a;
+    for(let d = 1; d <= days; d++){
+      const k = key(view.y, view.m, d);
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'cal-day'; b.textContent = d;
+      let on = false, inside = false;
+      if(mode === 'loose') on = sel.includes(k);
+      else { on = (k === lo || k === hi); inside = !!(lo && hi && k > lo && k < hi); }
+      b.classList.toggle('on', on); b.classList.toggle('in', inside);
+      b.setAttribute('aria-pressed', on ? 'true' : 'false');
+      b.setAttribute('aria-label', `${d} de ${MESES_GL[view.m]} de ${view.y}`);
+      b.addEventListener('click', ()=> pick(k));
+      grid.appendChild(b);
+    }
+    hint.textContent = mode === 'loose' ? 'Preme os días da actividade.' : (rng.a && !rng.b ? 'Agora escolle o día de fin.' : 'Escolle o día de inicio e o de fin.');
+  }
+  function pick(k){
+    if(mode === 'loose'){ sel = sel.includes(k) ? sel.filter(x => x !== k) : sel.concat(k); }
+    else if(!rng.a || (rng.a && rng.b)){ rng = {a: k, b: null}; }
+    else { rng.b = k; }
+    draw(); write();
+  }
+  box.querySelectorAll('input[type=radio]').forEach(r => r.addEventListener('change', ()=>{
+    mode = r.value; sel = []; rng = {a: null, b: null}; draw();
+  }));
+  box.querySelector('.cal-prev').addEventListener('click', ()=>{ view.m--; if(view.m < 0){ view.m = 11; view.y--; } draw(); });
+  box.querySelector('.cal-next').addEventListener('click', ()=>{ view.m++; if(view.m > 11){ view.m = 0; view.y++; } draw(); });
+  box.querySelector('.cal-clear').addEventListener('click', ()=>{ sel = []; rng = {a: null, b: null}; target.value = ''; pkFire(target); draw(); });
+  target.addEventListener('input', sync);
+  sync();
+  return box;
+}
+// Panel experto: pon os selectores baixo os campos de datas e horario.
+$('#in-datas').after(makeDatesPicker($('#in-datas')));
+$('#in-horario').after(makeHorarioPicker($('#in-horario')));
+
 // ---------- Asistente de ilustración ----------
 // Guía en 5 pasos. Configura os mesmos campos do panel (estilo, densidade,
 // elementos, idioma) e reutiliza os botóns de xerar prompt do panel.
-const wiz = {step: 1, uso: 'todo'};
-const WIZ_STEPS = 5;
+const wiz = {step: 1, uso: 'todo', full: false};
+const LS_WIZ_KEY = 'cfrCartelWiz';
+const DEFAULT_LUGAR = 'CFR de Vigo';
+const DEFAULT_HORARIO = 'De 16:30 a 20:30 horas';
+function selKeys(){ return ['square','story','xformat'].filter(k => state.fmtSel[k]).concat(['moodle','carrusel']); }
+function fmtLabel(k){ return {square:'Cadrado', story:'Story', xformat:'X', moodle:'Moodle', carrusel:'Carrusel'}[k]; }
 function wizEl(html){
   const t = document.createElement('template');
   t.innerHTML = html.trim();
   return t.content.firstElementChild;
 }
-function wizNeeds(){ return wiz.uso === 'carrusel' ? {h: true, v: false} : {h: true, v: true}; }
-function wizCarrusel(){ return wiz.uso === 'todo' || wiz.uso === 'carrusel'; }
+function wizNeeds(){ if(wiz.full) return {h: true, v: !!(state.fmtSel.square || state.fmtSel.story)}; return wiz.uso === 'carrusel' ? {h: true, v: false} : {h: true, v: true}; }
+function wizCarrusel(){ return wiz.full || wiz.uso === 'todo' || wiz.uso === 'carrusel'; }
 function wizFire(sel){ const e = $(sel); e.dispatchEvent(new Event('input', {bubbles: true})); e.dispatchEvent(new Event('change', {bubbles: true})); }
 
 function wizRadioGroup(container, name, options, current, onPick){
@@ -2788,15 +3005,18 @@ function wizStep1(body){
 }
 
 function wizStep2(body){
+  const tit = wiz.full ? '' : `<label>Título da actividade</label><input type="text" id="wiz-titulo">
+    <div class="hint">Úsase como tema da ilustración. Se está baleiro, o prompt levará «[TEMA]». Se o cambias aquí, cámbiase tamén no cartel.</div>`;
   body.appendChild(wizEl(`<div><h3>2. De que trata a formación?</h3>
-    <label>Título da actividade</label><input type="text" id="wiz-titulo">
-    <div class="hint">Úsase como tema da ilustración. Se está baleiro, o prompt levará «[TEMA]». Se o cambias aquí, cámbiase tamén no cartel.</div>
+    ${tit}
     <label>Que queres que se vexa na imaxe? (elementos visuais)</label>
     <input type="text" id="wiz-elementos" list="elementos-presets" placeholder="Escolle unha suxestión ou escribe a túa">
     <div class="hint">Podes escoller unha suxestión da lista ou describir co teu texto (por exemplo, «docentes e alumnado cunha tableta»). Se o deixas baleiro, usarase un contexto educativo xenérico.</div></div>`));
-  $('#wiz-titulo').value = state.titulo || '';
   $('#wiz-elementos').value = $('#in-img-elementos').value;
-  $('#wiz-titulo').addEventListener('input', ()=>{ $('#in-titulo').value = $('#wiz-titulo').value; $('#in-titulo').dispatchEvent(new Event('input', {bubbles: true})); });
+  if(!wiz.full){
+    $('#wiz-titulo').value = state.titulo || '';
+    $('#wiz-titulo').addEventListener('input', ()=>{ $('#in-titulo').value = $('#wiz-titulo').value; $('#in-titulo').dispatchEvent(new Event('input', {bubbles: true})); });
+  }
   $('#wiz-elementos').addEventListener('input', ()=>{ $('#in-img-elementos').value = $('#wiz-elementos').value; wizFire('#in-img-elementos'); });
 }
 
@@ -2960,17 +3180,125 @@ function wizStep5(body){
   });
 }
 
+function wizSteps(){
+  return wiz.full
+    ? [wizFDatos, wizFFormatos, wizStep2, wizStep3, wizStep4, wizStep5, wizFRevision, wizFDescarga]
+    : [wizStep1, wizStep2, wizStep3, wizStep4, wizStep5];
+}
+function wizSaveProgress(done){
+  if(!wiz.full) return;
+  safeLocalStorageSet(LS_WIZ_KEY, JSON.stringify({step: wiz.step, done: !!done, mode: 'asistente'}));
+}
 function renderWizard(){
   const body = $('#wiz-body');
+  const steps = wizSteps();
+  if(wiz.step > steps.length) wiz.step = steps.length;
   body.innerHTML = '';
-  $('#wiz-step-label').textContent = `Paso ${wiz.step} de ${WIZ_STEPS}`;
+  $('#wiz-title').textContent = wiz.full ? 'Asistente de cartelería' : 'Asistente de ilustración';
+  $('#btn-wiz-expert').style.display = wiz.full ? 'inline-block' : 'none';
+  $('#wiz-step-label').textContent = `Paso ${wiz.step} de ${steps.length}`;
   $('#btn-wiz-prev').style.visibility = wiz.step === 1 ? 'hidden' : 'visible';
-  $('#btn-wiz-next').textContent = wiz.step === WIZ_STEPS ? 'Rematar' : 'Seguinte';
-  [null, wizStep1, wizStep2, wizStep3, wizStep4, wizStep5][wiz.step](body);
+  $('#btn-wiz-next').textContent = wiz.step === steps.length ? 'Rematar' : 'Seguinte';
+  steps[wiz.step - 1](body);
+  const h = body.querySelector('h3');
+  if(h) h.textContent = wiz.step + '. ' + h.textContent.replace(/^\d+\.\s*/, '');
   body.scrollTop = 0;
+  wizSaveProgress(false);
+}
+// ----- Asistente completo: pasos propios -----
+function wizBindField(sel, inputId){
+  const el = $(sel);
+  el.value = $(inputId).value;
+  el.addEventListener('input', ()=>{ $(inputId).value = el.value; $(inputId).dispatchEvent(new Event('input', {bubbles: true})); });
+}
+function wizFDatos(body){
+  const ex = (state.codigo === 'V2601030') ? '<div class="hint carrusel-warn">Os datos que se ven agora son un exemplo: substitúeos polos da túa actividade.</div>' : '';
+  body.appendChild(wizEl(`<div><h3>1. Datos da actividade</h3>${ex}
+    <label>Código da actividade</label><input type="text" id="wiz-d-codigo" placeholder="V2601030">
+    <label>Título</label><textarea id="wiz-d-titulo" placeholder="Saúde mental e benestar na aula"></textarea>
+    <label>Ponente / boas prácticas de centro</label><textarea id="wiz-d-ponentes" placeholder="Unha liña por cada persoa ou entrada"></textarea>
+    <div class="hint">Cada liña aparecerá como unha liña separada no cartel.</div>
+    <label>Lugar de celebración</label><input type="text" id="wiz-d-lugar" placeholder="CFR de Vigo"><div class="hint">Suxestión habitual: «CFR de Vigo». Confírmao ou cámbiao.</div>
+    <label>Datas</label><input type="text" id="wiz-d-datas" placeholder="30/09 - 07/10 - 14/10 - 22/10 de 2026"><div id="wiz-pk-datas"></div>
+    <label>Horario</label><input type="text" id="wiz-d-horario" placeholder="De 16:30 a 20:30 horas"><div id="wiz-pk-horario"></div>
+    <p class="wiz-body-note">A cor de acento, o aliñamento e os logos están no modo experto (os valores por defecto serven para a maioría dos casos).</p></div>`));
+  [['codigo','#in-codigo'],['titulo','#in-titulo'],['ponentes','#in-ponentes'],['lugar','#in-lugar'],['datas','#in-datas'],['horario','#in-horario']]
+    .forEach(([k,id])=> wizBindField('#wiz-d-' + k, id));
+  $('#wiz-pk-datas').appendChild(makeDatesPicker($('#wiz-d-datas')));
+  $('#wiz-pk-horario').appendChild(makeHorarioPicker($('#wiz-d-horario')));
+}
+function wizFFormatos(body){
+  body.appendChild(wizEl(`<div><h3>2. Que formatos necesitas?</h3>
+    <p>Escolle os formatos para redes sociais. <b>Moodle e carrusel inclúense sempre.</b></p><div id="wiz-fmts"></div>
+    <p class="wiz-body-note">Cadrado e story usan a ilustración vertical; X, Moodle e carrusel usan a horizontal. Só che pediremos as imaxes que fagan falta.</p></div>`));
+  const opts = [['square','Cadrado Instagram','1080 × 1080'],['story','Story Instagram','1080 × 1920'],['xformat','X (Twitter)','1600 × 900']];
+  opts.forEach(([k,t,dim])=>{
+    const lab = wizEl('<label class="wiz-opt"><input type="checkbox"><span><span class="wiz-title"></span><span class="wiz-sub"></span></span></label>');
+    lab.querySelector('.wiz-title').textContent = t;
+    lab.querySelector('.wiz-sub').textContent = dim;
+    const inp = lab.querySelector('input');
+    inp.checked = !!state.fmtSel[k];
+    lab.classList.toggle('sel', inp.checked);
+    inp.addEventListener('change', ()=>{ state.fmtSel[k] = inp.checked; lab.classList.toggle('sel', inp.checked); persistAllDebounced(); });
+    $('#wiz-fmts').appendChild(lab);
+  });
+  [['Etiqueta de Moodle','1600 × 400'],['Carrusel de Moodle','1600 × 900, sen texto']].forEach(([t,dim])=>{
+    const lab = wizEl('<label class="wiz-opt sel"><input type="checkbox" checked disabled><span><span class="wiz-title"></span><span class="wiz-sub"></span></span></label>');
+    lab.querySelector('.wiz-title').textContent = t + ' (incluído sempre)';
+    lab.querySelector('.wiz-sub').textContent = dim;
+    $('#wiz-fmts').appendChild(lab);
+  });
+}
+function wizFRevision(body){
+  body.appendChild(wizEl('<div><h3>7. Revisión</h3><p>Comproba o resultado antes de descargar.</p><div id="wiz-avisos"></div><div class="wiz-chips" id="wiz-view-chips"></div><div id="wiz-rev-extra"></div></div>'));
+  const av = avisosFor(selKeys());
+  const box = $('#wiz-avisos');
+  if(av.length === 0){
+    box.appendChild(wizEl('<div class="wiz-res"><span class="ok">✔ Non hai avisos: datos, ilustracións e contraste correctos.</span></div>'));
+  } else {
+    av.forEach(a=>{ const d = wizEl('<div class="wiz-res"><span class="warn">⚠ </span><span class="t"></span></div>'); d.querySelector('.t').textContent = a; box.appendChild(d); });
+  }
+  const conf = wizEl('<div class="wiz-res"><b>Confirma estes datos:</b><br><span class="c"></span></div>');
+  conf.querySelector('.c').textContent = `Lugar: ${state.lugar || '(baleiro)'} · Horario: ${state.horario || '(baleiro)'} · Datas: ${state.datas || '(baleiro)'}`;
+  box.appendChild(conf);
+  wizFillChips($('#wiz-view-chips'));
+  const ex = $('#wiz-rev-extra');
+  ex.appendChild(wizEl('<p class="wiz-body-note">Se unha ilustración se ve cortada ou mal colocada nalgún formato, axústaa en «Axustes avanzados → Axuste da ilustración» (modo experto).</p>'));
+  const b = wizEl('<button class="btn-secondary" type="button">Abrir o axuste da ilustración</button>');
+  b.addEventListener('click', ()=>{
+    closeWizard();
+    const d = $('#acc-axuste'); if(d){ d.open = true; d.scrollIntoView({behavior: 'smooth', block: 'start'}); }
+  });
+  ex.appendChild(b);
+}
+async function wizDownloadOne(key){
+  const keys = [key];
+  if(!confirmAvisos(avisosFor(keys))) return;
+  const {canvas} = await canvasForFormatData(key, state);
+  downloadCanvas(canvas, `${state.codigo || 'cartel'}_${key}.${fileExtFor(key)}`);
+}
+function wizFDescarga(body){
+  body.appendChild(wizEl('<div><h3>8. Descarga</h3><p>Descarga os formatos que escolliches. Moodle e carrusel van sempre incluídos.</p><div id="wiz-dl"></div><p class="wiz-body-note" id="wiz-hex-note"></p></div>'));
+  const dl = $('#wiz-dl');
+  selKeys().forEach(k=>{
+    const b = wizEl('<button class="btn-secondary" type="button" style="margin:3px 0;"></button>');
+    b.textContent = `Descargar ${fmtLabel(k)} (${fileExtFor(k).toUpperCase()})`;
+    b.addEventListener('click', ()=> wizDownloadOne(k));
+    dl.appendChild(b);
+  });
+  const z = wizEl('<button class="btn-primary" type="button" style="margin:8px 0 3px;">Descargar todo (ZIP)</button>');
+  z.addEventListener('click', ()=> exportZip(selKeys()));
+  const pdf = wizEl('<button class="btn-primary" type="button" style="margin:3px 0;">Descargar todo (PDF)</button>');
+  pdf.addEventListener('click', ()=> exportPdf(selKeys()));
+  const js = wizEl('<button class="btn-secondary" type="button" style="margin:3px 0;">💾 Gardar copia da actividade (.json)</button>');
+  js.addEventListener('click', ()=> $('#btn-export-json').click());
+  dl.appendChild(z); dl.appendChild(pdf); dl.appendChild(js);
+  const hex = $('#out-carrusel-hex').value;
+  $('#wiz-hex-note').textContent = hex ? `Para o carrusel: cor para a columna K («CorFondo») da folla: ${hex}.` : '';
 }
 // Minimizar o asistente a unha barra para ver a vista previa sen que a xanela a tape.
 function wizViewTabs(){
+  if(wiz.full) return selKeys().map(k => [k, fmtLabel(k)]);
   const t = [['square', 'Cadrado'], ['story', 'Story'], ['xformat', 'X'], ['moodle', 'Moodle']];
   if(wiz.uso === 'carrusel') return [['carrusel', 'Carrusel']];
   if(wizCarrusel()) t.push(['carrusel', 'Carrusel']);
@@ -3010,14 +3338,53 @@ function wizRestore(){
 }
 $('#btn-wiz-bar-back').addEventListener('click', wizRestore);
 $('#btn-wiz-bar-close').addEventListener('click', ()=>{ $('#wiz-bar').style.display = 'none'; });
-function openWizard(){ wiz.step = 1; renderWizard(); $('#wiz-bar').style.display = 'none'; $('#wiz-overlay').style.display = 'flex'; }
-function closeWizard(){ $('#wiz-overlay').style.display = 'none'; $('#wiz-bar').style.display = 'none'; }
+function openWizard(){ wiz.full = false; wiz.step = 1; renderWizard(); $('#wiz-bar').style.display = 'none'; $('#wiz-overlay').style.display = 'flex'; }
+function openFullWizard(step){
+  wiz.full = true; wiz.step = step || 1; renderWizard();
+  $('#wiz-bar').style.display = 'none'; $('#wiz-overlay').style.display = 'flex';
+}
+function closeWizard(){ $('#wiz-overlay').style.display = 'none'; $('#wiz-bar').style.display = 'none'; updateResumeBanner(); }
+function updateResumeBanner(){
+  let w = null;
+  try{ w = JSON.parse(safeLocalStorageGet(LS_WIZ_KEY) || 'null'); } catch(e){ w = null; }
+  const show = !!(w && !w.done && w.mode === 'asistente' && w.step > 1);
+  $('#wiz-resume').style.display = show ? 'block' : 'none';
+  if(show) $('#wiz-resume-step').textContent = '(paso ' + w.step + ')';
+}
+$('#btn-asi-open').addEventListener('click', ()=> openFullWizard(1));
+$('#btn-wiz-resume').addEventListener('click', ()=>{
+  let w = null; try{ w = JSON.parse(safeLocalStorageGet(LS_WIZ_KEY) || 'null'); } catch(e){}
+  openFullWizard(w && w.step ? w.step : 1);
+});
+$('#btn-wiz-expert').addEventListener('click', ()=>{
+  safeLocalStorageSet(LS_WIZ_KEY, JSON.stringify({step: wiz.step, done: false, mode: 'experto'}));
+  closeWizard();
+});
 $('#btn-wizard-open').addEventListener('click', openWizard);
+$('#btn-wizard-open-top').addEventListener('click', openWizard);
 $('#btn-wiz-close').addEventListener('click', closeWizard);
+updateResumeBanner();
 $('#wiz-overlay').addEventListener('click', e=>{ if(e.target.id === 'wiz-overlay') closeWizard(); });
 $('#btn-wiz-prev').addEventListener('click', ()=>{ if(wiz.step > 1){ wiz.step--; renderWizard(); } });
 $('#btn-wiz-next').addEventListener('click', ()=>{
-  if(wiz.step < WIZ_STEPS){ wiz.step++; renderWizard(); } else { closeWizard(); }
+  if(wiz.step < wizSteps().length){ wiz.step++; renderWizard(); } else { wizSaveProgress(true); closeWizard(); }
+});
+
+// ---------- Seccións plegables e salto aos botóns de descarga ----------
+const LS_ACC_KEY = 'cfrCartelAcc';
+(function initAccordions(){
+  let saved = {};
+  try{ saved = JSON.parse(safeLocalStorageGet(LS_ACC_KEY) || '{}') || {}; } catch(e){ saved = {}; }
+  document.querySelectorAll('details.acc').forEach(d=>{
+    if(saved[d.id] === true) d.open = true;
+    d.addEventListener('toggle', ()=>{
+      saved[d.id] = d.open;
+      safeLocalStorageSet(LS_ACC_KEY, JSON.stringify(saved));
+    });
+  });
+})();
+$('#btn-goto-export').addEventListener('click', ()=>{
+  document.querySelector('.export-bar').scrollIntoView({behavior: 'smooth', block: 'center'});
 });
 
 // ---------- Export helpers ----------
@@ -3077,21 +3444,14 @@ function downloadCanvas(canvas, filename){
 // título baleiro ou moi longo e contraste da cor de acento co texto
 // branco. Só informan: o usuario decide se exporta igualmente.
 const TITLE_WARN_CHARS = 100;
-function confirmMissingIllustrations(scope){
+function avisosFor(keys){
   const avisos = [];
   const missing = [];
-  const onlyCarrusel = (scope === 'carrusel') || (scope === 'current' && currentTab === 'carrusel');
-  if(scope === 'current'){
-    if(currentTab === 'xformat' && !state.imgSrcH) missing.push('horizontal');
-    if((currentTab === 'square' || currentTab === 'story') && !state.imgSrcV) missing.push('vertical');
-    if(currentTab === 'moodle' && !state.imgSrcH) missing.push('horizontal');
-    if(currentTab === 'carrusel' && !state.imgSrcH) missing.push('horizontal');
-  } else if(scope === 'moodle' || scope === 'carrusel'){
-    if(!state.imgSrcH) missing.push('horizontal');
-  } else if(scope === 'all'){
-    if(!state.imgSrcH) missing.push('horizontal');
-    if(!state.imgSrcV) missing.push('vertical');
-  }
+  const needH = keys.some(k => ['xformat','moodle','carrusel'].includes(k));
+  const needV = keys.some(k => ['square','story'].includes(k));
+  if(needH && !state.imgSrcH) missing.push('horizontal');
+  if(needV && !state.imgSrcV) missing.push('vertical');
+  const onlyCarrusel = keys.length > 0 && keys.every(k => k === 'carrusel');
   if(missing.length) avisos.push(`Non cargaches a ilustración ${missing.join(' e ')}.`);
   if(!(state.codigo || '').trim()) avisos.push('O código da actividade está baleiro: os ficheiros chamaranse «cartel_…».');
   if(!onlyCarrusel){
@@ -3104,8 +3464,16 @@ function confirmMissingIllustrations(scope){
     const ratio = 1.05 / (relLuminance(rgb) + 0.05);
     if(ratio < 4.5) avisos.push(`A cor de acento dá un contraste de ${ratio.toFixed(2).replace('.', ',')}:1 co texto branco (mínimo recomendado 4,5:1): o texto pode custar de ler.`);
   }
+  return avisos;
+}
+function confirmAvisos(avisos){
   if(avisos.length === 0) return true;
   return confirm('Antes de exportar:\n\n' + avisos.map(a => '• ' + a).join('\n') + '\n\n¿Queres exportar así mesmo?');
+}
+function confirmMissingIllustrations(scope){
+  const ALL = ['square','story','xformat','moodle','carrusel'];
+  const keys = scope === 'current' ? [currentTab] : (scope === 'all' ? ALL : [scope]);
+  return confirmAvisos(avisosFor(keys));
 }
 
 $('#btn-png-current').addEventListener('click', async ()=>{
@@ -3153,20 +3521,22 @@ function readMoodleSize(){
 $('#in-moodle-w').addEventListener('change', readMoodleSize);
 $('#in-moodle-h').addEventListener('change', readMoodleSize);
 
-$('#btn-zip-all').addEventListener('click', async ()=>{
-  if(!confirmMissingIllustrations('all')) return;
+const ALL_KEYS = ['square','story','xformat','moodle','carrusel'];
+async function exportZip(keys){
+  if(!confirmAvisos(avisosFor(keys))) return;
   const zip = new JSZip();
-  for(const fmt of [...FORMATS, MOODLE_FORMAT, CARRUSEL_FORMAT]){
-    const {canvas} = await canvasForFormatData(fmt.key, state);
-    const dataUrl = canvasToDataUrl(canvas, fmt.key).split(',')[1];
-    zip.file(`${state.codigo || 'cartel'}_${fmt.key}.${fileExtFor(fmt.key)}`, dataUrl, {base64:true});
+  for(const key of keys){
+    const {canvas} = await canvasForFormatData(key, state);
+    const dataUrl = canvasToDataUrl(canvas, key).split(',')[1];
+    zip.file(`${state.codigo || 'cartel'}_${key}.${fileExtFor(key)}`, dataUrl, {base64:true});
   }
   const blob = await zip.generateAsync({type:'blob'});
   const link = document.createElement('a');
   link.download = `${state.codigo || 'cartel'}_formatos.zip`;
   link.href = URL.createObjectURL(blob);
   link.click();
-});
+}
+$('#btn-zip-all').addEventListener('click', ()=> exportZip(ALL_KEYS));
 
 // JPEG para o PDF (moito máis lixeiro ca PNG): aplánase sobre branco antes
 // de codificar, para que ningún píxel transparente saia negro.
@@ -3180,12 +3550,13 @@ function canvasJpegDataUrl(canvas, quality){
   return c.toDataURL('image/jpeg', quality);
 }
 
-$('#btn-pdf-all').addEventListener('click', async ()=>{
-  if(!confirmMissingIllustrations('all')) return;
+async function exportPdf(keys){
+  if(!confirmAvisos(avisosFor(keys))) return;
   const { jsPDF } = window.jspdf;
   let pdf = null;
-  for(const fmt of [...FORMATS, MOODLE_FORMAT, CARRUSEL_FORMAT]){
-    const {canvas} = await canvasForFormatData(fmt.key, state);
+  for(const key of keys){
+    const fmt = getFormatByKey(key);
+    const {canvas} = await canvasForFormatData(key, state);
     const orientation = fmt.w >= fmt.h ? 'landscape' : 'portrait';
     if(!pdf){
       pdf = new jsPDF({orientation, unit:'px', format:[fmt.w, fmt.h]});
@@ -3195,7 +3566,26 @@ $('#btn-pdf-all').addEventListener('click', async ()=>{
     pdf.addImage(canvasJpegDataUrl(canvas, 0.92), 'JPEG', 0, 0, fmt.w, fmt.h);
   }
   pdf.save(`${state.codigo || 'cartel'}_formatos.pdf`);
-});
+}
+$('#btn-pdf-all').addEventListener('click', ()=> exportPdf(ALL_KEYS));
+
+// Asistente completo: ábrese só ao empezar cunha actividade sen datos
+// (e se non se pasou ao modo experto). Con datos gardados ofrece
+// «Continuar onde o deixei».
+(function autoOpenWizard(){
+  let w = null; try{ w = JSON.parse(safeLocalStorageGet(LS_WIZ_KEY) || 'null'); } catch(e){}
+  if(w && w.mode === 'experto') return;
+  let empty = true;
+  const raw = safeLocalStorageGet(LS_DRAFT_KEY);
+  if(raw){
+    try{
+      const d = JSON.parse(raw);
+      empty = !['codigo','titulo','ponentes','datas'].some(k => (d[k] || '').trim());
+    } catch(e){ empty = true; }
+    if(safeLocalStorageGet(LS_IMGS_KEY)) empty = false;
+  }
+  if(empty) openFullWizard((w && !w.done && w.step) ? w.step : 1);
+})();
 </script>
 </body>
 </html>
