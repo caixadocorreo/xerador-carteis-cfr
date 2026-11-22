@@ -74,10 +74,12 @@ Todos os formatos teñen **auto-axuste do tamaño de letra do título**: se é l
 
 Na sección **«Axuste da ilustración»** escóllese, para cada formato, como se coloca a imaxe na súa zona:
 
-- **Recortar**: enche a zona e pode cortar os bordos. En cadrado e story pódese fixar a posición (arriba, centro ou abaixo).
+- **Recortar**: enche a zona e pode cortar os bordos. En cadrado e story pódese fixar a posición (arriba, centro ou abaixo) ou escoller **posición libre**: arrastras a imaxe sobre a vista previa e a descarga respecta esa posición.
 - **Encaixar completa**: móstrase enteira, sen cortar; as franxas que sobran quedan en branco.
 
 Valores por defecto: cadrado, recortar arriba; story, recortar centro; X e Moodle, encaixar completa.
+
+Ao cargar unha ilustración, se o seu lado maior pasa de 2000 px, reescálase e gárdase en JPEG ao 92 % (menos peso na garda e no PDF); se é menor, non se toca.
 
 A descarga sae **igual que a vista previa**. (Nunha versión anterior as descargas podían estirar a ilustración; xa está corrixido.)
 
@@ -134,8 +136,10 @@ Descarga: botón **«Descargar imaxe (carrusel)»** → `{codigo}_carrusel.png` 
 - **Descargar PNG (formato actual)** — só o formato e patrón que se está a ver.
 - **🔍 Ver a tamaño real** — amosa o formato/patrón actual a escala 1:1 (1 píxel = 1 píxel), nunha xanela con scroll, útil para revisar detalles antes de exportar.
 - **Descargar imaxes (os 5 formatos, ZIP)** — cadrado + story + X + etiqueta de Moodle + imaxe do carrusel nun único ZIP (o carrusel co formato PNG/JPG escollido).
-- **Descargar PDF (os 5 formatos)** — os mesmos 5 formatos como páxinas dun PDF.
+- **Descargar PDF (os 5 formatos)** — os mesmos 5 formatos como páxinas dun PDF. As páxinas van en JPEG ao 92 % (pesa moito menos ca en PNG, con algo menos de nitidez nos bordos finos).
 - **Descargar PNG (etiqueta Moodle)** e **Descargar imaxe (carrusel)** — botóns independentes, sempre visibles, para descargar só esa imaxe.
+
+**Avisos antes de exportar:** se falta a ilustración, o código ou o título, se o título é moi longo (máis de 100 caracteres) ou se a cor de acento dá un contraste co texto branco inferior a 4,5:1, aparece unha lista e podes exportar igualmente ou cancelar.
 
 Antes de exportar, se falta a ilustración horizontal (necesaria tamén para o carrusel) ou a vertical necesaria para ese formato, a ferramenta pregunta se se quere continuar así mesmo.
 
@@ -145,6 +149,10 @@ Antes de exportar, se falta a ilustración horizontal (necesaria tamén para o c
 
 - **Garda automática**: os datos do formulario (texto, ilustracións, cores, patróns e opcións do carrusel) gárdanse sós neste navegador a medida que os escribes. Non se envía nada a ningún servidor. Se pechas a lapela por accidente, ao reabrir a ferramenta recuperas o traballo.
 - As **preferencias** (cor de acento, aliñamento, logos) gárdanse á parte do **borrador** (os datos concretos da actividade) — así podes limpar unha actividade sen perder a túa configuración habitual.
+- **⬇ Exportar / ⬆ Importar actividade (.json)**: copia de seguridade ou traslado a outro ordenador ou persoa. Inclúe texto, patróns, axustes, cores e opcións do carrusel; coa caixa «Incluír ilustracións e logos» marcada, tamén as imaxes (o ficheiro pesa máis). Importar substitúe a actividade actual, tras confirmación; se o ficheiro non trae ilustracións, mantéñense as cargadas.
+- **Textos para as redes**: xera un texto alternativo e un texto de publicación a partir dos datos do cartel (código, título, persoas relatoras, lugar, datas e horario), editables e con botón de copiar. Non describen a ilustración.
+- **Versión**: o número (agora v1.1) aparece ao final do panel de edición e na axuda. Para cambialo, edítase a constante `APP_VERSION` no código.
+- **Aviso de garda**: o texto e as ilustracións gárdanse por separado. Se as imaxes non caben no almacenamento do navegador, aparece un aviso e o texto gárdase igual. Ao estar a ferramenta publicada, a garda é **por navegador e por enderezo**: non se comparte entre ordenadores; para iso serve o .json.
 - **🗑️ Nova actividade**: limpa código, título, ponentes, lugar, datas, horario, ilustracións e patróns, para empezar unha actividade nova de cero. Pide confirmación antes de borrar. A cor de acento, o aliñamento e os logos cargados **non** se ven afectados.
 
 ---
@@ -153,9 +161,6 @@ Antes de exportar, se falta a ilustración horizontal (necesaria tamén para o c
 
 **O título non se le ben, queda moi grande ou desbordado.**
 Non hai que facer nada: todos os formatos teñen auto-axuste de letra. Se o título é moi longo, proba a "banda inferior única" (dá máis marxe vertical á cabeceira).
-
-**Cambiei un logo ou unha ilustración e non se ve reflectido na descarga.**
-Agarda un segundo tras cargar o ficheiro antes de premer descargar — a vista previa tarda un intre en actualizarse.
 
 **Cal ilustración uso en cada formato?**
 A horizontal vai en X, no banner de Moodle e no carrusel; a vertical vai en Cadrado e Story. Se só cargas unha delas, o formato que precise a outra amosará "Sen ilustración cargada".
