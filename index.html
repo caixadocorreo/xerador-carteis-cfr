@@ -534,6 +534,13 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   .wiz-res .ok{color:#1b6b43;}
   .wiz-res .warn{color:#b45309;font-weight:600;}
   .wiz-body-note{font-size:12.5px;color:#6b7686;}
+  .wiz-chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 10px;}
+  .wiz-chips button{background:#eef1f5;color:var(--azul-escuro);border:1px solid var(--gris-borde);font-size:12.5px;padding:5px 10px;}
+  .wiz-chips button:hover{background:#e2e6ec;}
+  .wiz-bar{position:fixed;left:12px;bottom:12px;width:356px;background:#fff;border:1px solid var(--azul);border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,0.25);padding:10px 12px;z-index:1000;display:none;flex-direction:column;gap:6px;}
+  .wiz-bar .wiz-bar-title{font-size:13px;font-weight:700;color:var(--azul-escuro);}
+  .wiz-bar .wiz-bar-row{display:flex;gap:6px;justify-content:flex-end;}
+  .wiz-bar .wiz-bar-row button{width:auto;margin:0;padding:6px 12px;font-size:12.5px;}
 
   /* ---------- CARRUSEL (vista previa) ---------- */
   .carrusel-preview{display:flex;flex-direction:column;align-items:center;gap:14px;}
@@ -1152,6 +1159,15 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   </div>
 </div>
 
+<div id="wiz-bar" class="wiz-bar">
+  <div class="wiz-bar-title">Asistente de ilustración — revisando o resultado</div>
+  <div class="wiz-chips" id="wiz-bar-chips" style="margin:0;"></div>
+  <div class="wiz-bar-row">
+    <button class="btn-secondary" id="btn-wiz-bar-close" type="button">Pechar</button>
+    <button class="btn-primary" id="btn-wiz-bar-back" type="button">Volver ao asistente</button>
+  </div>
+</div>
+
 <div id="help-overlay" class="help-overlay" style="display:none;">
   <div class="help-modal">
     <div class="help-modal-header">
@@ -1192,7 +1208,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
       <h3>4. Xerar prompts para as ilustracións (IA)</h3>
       <ol>
         <li>Escolle "Elementos visuais" nunha lista de suxestións predefinidas ou escribe a túa propia descrición — compártese entre as dúas imaxes. Os últimos que usaches aparecen como botóns "Recentes" debaixo do campo.</li>
-        <li><strong>🪄 Asistente de ilustración</strong>: botón na sección «Ilustración» que guía en 5 pasos (uso, tema, aspecto, prompt e comprobación da imaxe). Configura os mesmos campos do panel e xera o prompt co mesmo xerador. A comprobación automática (tamaño, proporción e bordos non brancos) é orientativa; o resto revísase á man.</li>
+        <li><strong>🪄 Asistente de ilustración</strong>: botón na sección «Ilustración» que guía en 5 pasos (uso, tema, aspecto, prompt e comprobación da imaxe). Configura os mesmos campos do panel e xera o prompt co mesmo xerador. A comprobación automática (tamaño, proporción e bordos non brancos) é orientativa; o resto revísase á man. No paso 5, os botóns «Ver en…» recollen o asistente nunha barra pequena para ver o resultado na vista previa (con «Volver ao asistente» retómase onde estaba). No paso 4 hai tamén «Copiar os dous prompts xuntos».</li>
         <li><strong>Estilo visual</strong>: vectorial plano (por defecto), liña fina, isométrico, acuarela suave, plano con contorno groso, iconográfico (obxectos grandes), duotono ou xeométrico minimalista. A frase de paleta do prompt adáptase a cada estilo. Para o carrusel, onde a imaxe se ve pequena sobre branco, convén un estilo de formas grandes e poucos detalles.</li>
         <li><strong>Densidade</strong>: «escena completa» (por defecto) ou «poucos elementos grandes» (3 ou 4 elementos claros, que se len mellor a tamaño reducido).</li>
         <li><strong>Idioma do prompt</strong>: galego ou inglés (o texto de "Elementos visuais" mantense na lingua en que o escribiches).</li>
@@ -1322,7 +1338,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 
 <script>
 // Versión da aplicación: cambiar este número en cada actualización publicada.
-const APP_VERSION = 'v1.3';
+const APP_VERSION = 'v1.4';
 
 const FORMATS = [
   {key:'square', cls:'square', w:1080, h:1080, label:'IG-cadrado'},
@@ -1971,7 +1987,7 @@ $('#help-overlay').addEventListener('click', e=>{
   if(e.target.id === 'help-overlay') closeHelp();
 });
 document.addEventListener('keydown', e=>{
-  if(e.key === 'Escape'){ closeHelp(); closeRealSize(); if(typeof closeWizard === 'function') closeWizard(); }
+  if(e.key === 'Escape'){ closeHelp(); closeRealSize(); if(typeof closeWizard === 'function' && $('#wiz-overlay').style.display !== 'none') closeWizard(); }
 });
 
 // Vista a tamaño real: constrúe o póster do formato/patrón activos sen
@@ -2253,7 +2269,7 @@ wireUpPromptButtons('v', buildImagePromptVertical);
 $('#btn-copy-both-prompts').addEventListener('click', async ()=>{
   const h = $('#out-img-prompt-h').value;
   const v = $('#out-img-prompt-v').value;
-  const both = `--- PROMPT HORIZONTAL (X / Moodle) ---\n${h}\n\n--- PROMPT VERTICAL (Cadrado / Story) ---\n${v}`;
+  const both = `--- PROMPT HORIZONTAL (X / Moodle / Carrusel) ---\n${h}\n\n--- PROMPT VERTICAL (Cadrado / Story) ---\n${v}`;
   try{
     await navigator.clipboard.writeText(both);
     const btn = $('#btn-copy-both-prompts');
@@ -2814,6 +2830,7 @@ function wizStep4(body){
     <select id="wiz-lang"><option value="gl">Galego</option><option value="en">Inglés</option></select>
     <button class="btn-primary" id="wiz-gen" type="button">Xerar ${need.v ? 'os prompts' : 'o prompt'}</button>
     <div id="wiz-prompts"></div>
+    <button class="btn-secondary" id="wiz-copy-both" type="button" style="display:none;">Copiar os dous prompts xuntos</button>
     <h3>Que facer co prompt</h3>
     <ol>
       <li>Copia o prompt co botón de copiar.</li>
@@ -2841,6 +2858,22 @@ function wizStep4(body){
       $('#wiz-out-' + b.k).value = $('#out-img-prompt-' + b.k).value;
       $('#wiz-wrap-' + b.k).style.display = 'block';
     });
+    if(need.h && need.v) $('#wiz-copy-both').style.display = 'block';
+  });
+  $('#wiz-copy-both').addEventListener('click', async ()=>{
+    const both = `--- PROMPT HORIZONTAL (X / Moodle / Carrusel) ---\n${$('#wiz-out-h').value}\n\n--- PROMPT VERTICAL (Cadrado / Story) ---\n${$('#wiz-out-v').value}`;
+    const btn = $('#wiz-copy-both');
+    let ok = false;
+    try{ await navigator.clipboard.writeText(both); ok = true; }
+    catch(e){
+      const ta = document.createElement('textarea');
+      ta.value = both; document.body.appendChild(ta); ta.select();
+      try{ ok = document.execCommand('copy'); } catch(e2){ ok = false; }
+      document.body.removeChild(ta);
+    }
+    const old = btn.textContent;
+    btn.textContent = ok ? 'Copiado ✓' : 'Non se copiou';
+    setTimeout(()=>{ btn.textContent = old; }, 1500);
   });
 }
 
@@ -2894,7 +2927,7 @@ async function wizCheckImage(kind){
 
 function wizStep5(body){
   const need = wizNeeds();
-  body.appendChild(wizEl('<div><h3>5. Carga a imaxe e comproba</h3><p>Carga aquí a imaxe que descargaches da IA. A comprobación automática é orientativa.</p><div id="wiz-uploads"></div><h3>Revisa a man</h3><p class="wiz-body-note">A app non pode detectar isto; mira a imaxe e marca cada punto.</p><div id="wiz-manual"></div><p class="wiz-body-note">Podes ver o resultado nas pestanas Cadrado, Story, X, Moodle e Carrusel da vista previa.</p></div>'));
+  body.appendChild(wizEl('<div><h3>5. Carga a imaxe e comproba</h3><p>Carga aquí a imaxe que descargaches da IA. A comprobación automática é orientativa.</p><div id="wiz-uploads"></div><h3>Mira o resultado no cartel</h3><p class="wiz-body-note">O asistente recóllese nunha barra pequena para que vexas a vista previa; despois podes volver.</p><div class="wiz-chips" id="wiz-view-chips"></div><h3>Revisa a man</h3><p class="wiz-body-note">A app non pode detectar isto; mira a imaxe e marca cada punto.</p><div id="wiz-manual"></div><p class="wiz-body-note">Podes ver o resultado nas pestanas Cadrado, Story, X, Moodle e Carrusel da vista previa.</p></div>'));
   const kinds = [];
   if(need.h) kinds.push({k: 'h', label: 'Ilustración horizontal (X, Moodle e carrusel)'});
   if(need.v) kinds.push({k: 'v', label: 'Ilustración vertical (cadrado e story)'});
@@ -2912,6 +2945,7 @@ function wizStep5(body){
     });
     wizCheckImage(o.k);
   });
+  wizFillChips($('#wiz-view-chips'));
   const manual = [
     'Non hai texto, letras nin números en ningún sitio (tampouco en obxectos como cubos ou reloxos).',
     'Ningún elemento toca nin sae polo bordo da imaxe.',
@@ -2935,8 +2969,49 @@ function renderWizard(){
   [null, wizStep1, wizStep2, wizStep3, wizStep4, wizStep5][wiz.step](body);
   body.scrollTop = 0;
 }
-function openWizard(){ wiz.step = 1; renderWizard(); $('#wiz-overlay').style.display = 'flex'; }
-function closeWizard(){ $('#wiz-overlay').style.display = 'none'; }
+// Minimizar o asistente a unha barra para ver a vista previa sen que a xanela a tape.
+function wizViewTabs(){
+  const t = [['square', 'Cadrado'], ['story', 'Story'], ['xformat', 'X'], ['moodle', 'Moodle']];
+  if(wiz.uso === 'carrusel') return [['carrusel', 'Carrusel']];
+  if(wizCarrusel()) t.push(['carrusel', 'Carrusel']);
+  return t;
+}
+function wizShowTab(key){
+  if(viewMode === 'multi') $('#btn-view-single').click();
+  const btn = document.querySelector('.tab-btn[data-format="' + key + '"]');
+  if(btn) btn.click();
+}
+function wizFillChips(container){
+  container.innerHTML = '';
+  wizViewTabs().forEach(([key, label])=>{
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = 'Ver en ' + label;
+    b.addEventListener('click', ()=>{ wizShowTab(key); wizMinimize(); });
+    container.appendChild(b);
+  });
+}
+function wizMinimize(){
+  const chips = $('#wiz-bar-chips');
+  chips.innerHTML = '';
+  wizViewTabs().forEach(([key, label])=>{
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.textContent = label;
+    b.addEventListener('click', ()=> wizShowTab(key));
+    chips.appendChild(b);
+  });
+  $('#wiz-overlay').style.display = 'none';
+  $('#wiz-bar').style.display = 'flex';
+}
+function wizRestore(){
+  $('#wiz-bar').style.display = 'none';
+  $('#wiz-overlay').style.display = 'flex';
+}
+$('#btn-wiz-bar-back').addEventListener('click', wizRestore);
+$('#btn-wiz-bar-close').addEventListener('click', ()=>{ $('#wiz-bar').style.display = 'none'; });
+function openWizard(){ wiz.step = 1; renderWizard(); $('#wiz-bar').style.display = 'none'; $('#wiz-overlay').style.display = 'flex'; }
+function closeWizard(){ $('#wiz-overlay').style.display = 'none'; $('#wiz-bar').style.display = 'none'; }
 $('#btn-wizard-open').addEventListener('click', openWizard);
 $('#btn-wiz-close').addEventListener('click', closeWizard);
 $('#wiz-overlay').addEventListener('click', e=>{ if(e.target.id === 'wiz-overlay') closeWizard(); });
