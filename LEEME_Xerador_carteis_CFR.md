@@ -105,7 +105,16 @@ Para axudar a xeralas cunha ferramenta de IA (ex. Gemini), a sección "Ilustraci
 
 Ademais, agora podes axustar:
 
-- **Estilo visual**: vectorial plano (por defecto), liña fina, isométrico ou acuarela suave.
+- **🪄 Asistente de ilustración**: botón na sección «Ilustración» que guía en 5 pasos, pensado para persoas sen coñecementos de deseño:
+  1. **Uso**: todo (redes, Moodle e carrusel), só redes e Moodle, ou só o carrusel. Decide se fan falta a imaxe horizontal, a vertical ou as dúas.
+  2. **Tema**: título da actividade e elementos visuais (con suxestións).
+  3. **Aspecto**: estilo explicado en linguaxe sinxela (con indicación de cales conveñen ao carrusel) e «escena completa» ou «poucos elementos grandes».
+  4. **Prompt**: xéranse con botón de copiar, e inclúense pasos xerais para usar unha ferramenta de IA (sen depender de ningunha concreta) e o consello de fixar a proporción 16:9 ou 9:16 no selector da ferramenta, se o permite.
+  5. **Carga e comprobación**: a app comproba automaticamente o tamaño, a proporción e se os bordos non son brancos (esta última é unha **estimación**), e a persoa revisa á man o que a app non pode detectar (texto na imaxe, elementos que tocan o bordo, marco, persoas identificables).
+
+  O asistente configura os mesmos campos do panel e usa o mesmo xerador de prompts.
+- **Estilo visual**: vectorial plano (por defecto), liña fina, isométrico, acuarela suave, plano con contorno groso, iconográfico (obxectos grandes), duotono ou xeométrico minimalista. A frase de paleta do prompt adáptase a cada estilo. Para o carrusel, onde a imaxe se ve pequena sobre branco, convén un estilo de formas grandes e poucos detalles (evita acuarela e isométrico). Esta recomendación é orientativa e non está probada con todas as ferramentas de IA.
+- **Densidade**: «escena completa» (por defecto) ou «poucos elementos grandes» (3 ou 4 elementos claros, que se len mellor a tamaño reducido).
 - **Idioma do prompt**: galego ou inglés (o texto que escribas en "Elementos visuais" mantense tal cal, na lingua en que o escribiches).
 - **Ferramenta destino**: xenérica ou Midjourney (engade automaticamente `--ar 16:9` / `--ar 9:16` ao final do prompt).
 - **Recentes**: os últimos "elementos visuais" e cores que usaches aparecen como botóns rápidos debaixo dos seus campos.
@@ -151,7 +160,7 @@ Antes de exportar, se falta a ilustración horizontal (necesaria tamén para o c
 - As **preferencias** (cor de acento, aliñamento, logos) gárdanse á parte do **borrador** (os datos concretos da actividade) — así podes limpar unha actividade sen perder a túa configuración habitual.
 - **⬇ Exportar / ⬆ Importar actividade (.json)**: copia de seguridade ou traslado a outro ordenador ou persoa. Inclúe texto, patróns, axustes, cores e opcións do carrusel; coa caixa «Incluír ilustracións e logos» marcada, tamén as imaxes (o ficheiro pesa máis). Importar substitúe a actividade actual, tras confirmación; se o ficheiro non trae ilustracións, mantéñense as cargadas.
 - **Textos para as redes**: xera un texto alternativo e un texto de publicación a partir dos datos do cartel (código, título, persoas relatoras, lugar, datas e horario), editables e con botón de copiar. Non describen a ilustración.
-- **Versión**: o número (agora v1.1) aparece ao final do panel de edición e na axuda. Para cambialo, edítase a constante `APP_VERSION` no código.
+- **Versión**: o número (agora v1.3) aparece ao final do panel de edición e na axuda. Para cambialo, edítase a constante `APP_VERSION` no código.
 - **Aviso de garda**: o texto e as ilustracións gárdanse por separado. Se as imaxes non caben no almacenamento do navegador, aparece un aviso e o texto gárdase igual. Ao estar a ferramenta publicada, a garda é **por navegador e por enderezo**: non se comparte entre ordenadores; para iso serve o .json.
 - **🗑️ Nova actividade**: limpa código, título, ponentes, lugar, datas, horario, ilustracións e patróns, para empezar unha actividade nova de cero. Pide confirmación antes de borrar. A cor de acento, o aliñamento e os logos cargados **non** se ven afectados.
 

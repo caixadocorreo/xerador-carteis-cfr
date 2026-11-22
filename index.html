@@ -520,6 +520,21 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   .btn-small{background:var(--azul);color:#fff;font-size:11.5px;padding:4px 9px;}
   textarea#out-img-prompt-h, textarea#out-img-prompt-v{min-height:130px;font-size:12px;font-family:monospace;}
 
+  /* ---------- ASISTENTE DE ILUSTRACIÓN ---------- */
+  .wiz-footer{display:flex;align-items:center;justify-content:space-between;padding:12px 24px;border-top:1px solid var(--gris-borde);flex-shrink:0;}
+  .wiz-footer .wiz-btn{width:auto;margin:0 0 0 8px;}
+  .wiz-opt{display:flex;gap:10px;align-items:flex-start;font-weight:500;font-size:14px;margin:8px 0;padding:9px 11px;border:1px solid var(--gris-borde);border-radius:8px;cursor:pointer;color:#2d3748;}
+  .wiz-opt input{margin-top:3px;flex:0 0 auto;}
+  .wiz-opt .wiz-sub{display:block;font-size:12px;color:#6b7686;font-weight:400;}
+  .wiz-opt.sel{border-color:var(--azul);background:#f2f8fd;}
+  .wiz-badge{display:inline-block;font-size:11px;font-weight:600;border-radius:10px;padding:1px 8px;margin-left:6px;}
+  .wiz-badge.ok{background:#e3f4ea;color:#1b6b43;}
+  .wiz-badge.no{background:#fdecdc;color:#9a4a07;}
+  .wiz-res{font-size:13px;margin:4px 0 10px;}
+  .wiz-res .ok{color:#1b6b43;}
+  .wiz-res .warn{color:#b45309;font-weight:600;}
+  .wiz-body-note{font-size:12.5px;color:#6b7686;}
+
   /* ---------- CARRUSEL (vista previa) ---------- */
   .carrusel-preview{display:flex;flex-direction:column;align-items:center;gap:14px;}
   .carrusel-main{display:block;outline:1px solid #cfd6df;background:#fff;}
@@ -963,6 +978,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
     <div class="hint" id="carrusel-contrast-info">Sae da cor de acento do cartel.</div>
 
     <h2>Ilustración</h2>
+    <button class="btn-primary" id="btn-wizard-open" type="button">🪄 Asistente de ilustración</button>
+    <div class="hint" style="margin-bottom:10px;">Axuda paso a paso para crear o prompt e comprobar a imaxe, sen coñecementos de deseño.</div>
     <div class="hint">Precísanse dúas imaxes: unha horizontal (para X e Moodle) e outra vertical (para cadrado e story). Xéranse á parte (ex. con IA) e cárganse cada unha no seu campo.</div>
 
     <label>Elementos visuais (opcional, común ás dúas)</label>
@@ -998,7 +1015,19 @@ https://github.com/nodeca/pako/blob/main/LICENSE
       <option value="line">Liña fina (line art)</option>
       <option value="isometric">Isométrico</option>
       <option value="watercolor">Acuarela suave</option>
+      <option value="outline">Plano con contorno groso</option>
+      <option value="icons">Iconográfico (obxectos grandes)</option>
+      <option value="duotone">Duotono (dous tons)</option>
+      <option value="geometric">Xeométrico minimalista</option>
     </select>
+    <div class="hint">Para o carrusel, onde a imaxe se ve pequena sobre fondo branco, convén un estilo de formas grandes e poucos detalles; evita acuarela e isométrico. A paleta do prompt adáptase ao estilo.</div>
+
+    <label>Densidade</label>
+    <select id="in-img-density">
+      <option value="scene">Escena completa (por defecto)</option>
+      <option value="few">Poucos elementos grandes</option>
+    </select>
+    <div class="hint">«Poucos elementos grandes» pide 3 ou 4 elementos claros, que se len mellor a tamaño reducido.</div>
 
     <label>Idioma do prompt</label>
     <select id="in-img-lang">
@@ -1105,6 +1134,24 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   </div>
 </div>
 
+<!-- ============ ASISTENTE DE ILUSTRACIÓN ============ -->
+<div id="wiz-overlay" class="help-overlay" style="display:none;">
+  <div class="help-modal">
+    <div class="help-modal-header">
+      <h2>Asistente de ilustración</h2>
+      <button id="btn-wiz-close" class="help-close" type="button" aria-label="Pechar">✕</button>
+    </div>
+    <div class="help-modal-body" id="wiz-body"></div>
+    <div class="wiz-footer">
+      <span id="wiz-step-label" class="wiz-body-note"></span>
+      <div>
+        <button id="btn-wiz-prev" class="btn-secondary wiz-btn" type="button">Anterior</button>
+        <button id="btn-wiz-next" class="btn-primary wiz-btn" type="button">Seguinte</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div id="help-overlay" class="help-overlay" style="display:none;">
   <div class="help-modal">
     <div class="help-modal-header">
@@ -1145,7 +1192,9 @@ https://github.com/nodeca/pako/blob/main/LICENSE
       <h3>4. Xerar prompts para as ilustracións (IA)</h3>
       <ol>
         <li>Escolle "Elementos visuais" nunha lista de suxestións predefinidas ou escribe a túa propia descrición — compártese entre as dúas imaxes. Os últimos que usaches aparecen como botóns "Recentes" debaixo do campo.</li>
-        <li><strong>Estilo visual</strong>: vectorial plano (por defecto), liña fina, isométrico ou acuarela suave.</li>
+        <li><strong>🪄 Asistente de ilustración</strong>: botón na sección «Ilustración» que guía en 5 pasos (uso, tema, aspecto, prompt e comprobación da imaxe). Configura os mesmos campos do panel e xera o prompt co mesmo xerador. A comprobación automática (tamaño, proporción e bordos non brancos) é orientativa; o resto revísase á man.</li>
+        <li><strong>Estilo visual</strong>: vectorial plano (por defecto), liña fina, isométrico, acuarela suave, plano con contorno groso, iconográfico (obxectos grandes), duotono ou xeométrico minimalista. A frase de paleta do prompt adáptase a cada estilo. Para o carrusel, onde a imaxe se ve pequena sobre branco, convén un estilo de formas grandes e poucos detalles.</li>
+        <li><strong>Densidade</strong>: «escena completa» (por defecto) ou «poucos elementos grandes» (3 ou 4 elementos claros, que se len mellor a tamaño reducido).</li>
         <li><strong>Idioma do prompt</strong>: galego ou inglés (o texto de "Elementos visuais" mantense na lingua en que o escribiches).</li>
         <li><strong>Ferramenta destino</strong>: xenérica (sen parámetros extra) ou Midjourney (engade automaticamente <code>--ar 16:9</code> / <code>--ar 9:16</code>).</li>
         <li>Por defecto os prompts usan a cor de acento do cartel. Se queres unha paleta distinta só para a ilustración, escríbea en "Cor da paleta para os prompts" ou escolle co selector de cor; tamén aquí aparecen as últimas cores usadas coma "Recentes".</li>
@@ -1273,7 +1322,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 
 <script>
 // Versión da aplicación: cambiar este número en cada actualización publicada.
-const APP_VERSION = 'v1.1';
+const APP_VERSION = 'v1.3';
 
 const FORMATS = [
   {key:'square', cls:'square', w:1080, h:1080, label:'IG-cadrado'},
@@ -1922,7 +1971,7 @@ $('#help-overlay').addEventListener('click', e=>{
   if(e.target.id === 'help-overlay') closeHelp();
 });
 document.addEventListener('keydown', e=>{
-  if(e.key === 'Escape'){ closeHelp(); closeRealSize(); }
+  if(e.key === 'Escape'){ closeHelp(); closeRealSize(); if(typeof closeWizard === 'function') closeWizard(); }
 });
 
 // Vista a tamaño real: constrúe o póster do formato/patrón activos sen
@@ -2040,14 +2089,50 @@ const IMG_STYLE_TEXT = {
     flat: 'ilustración vectorial plana, moderna e limpa; formas sinxelas, sen sombras duras',
     line: 'ilustración de liña fina (line art), monocromática, trazo limpo e continuo, con cor só en pequenos detalles de acento',
     isometric: 'ilustración isométrica moderna, formas xeométricas sinxelas con lixeira profundidade 3D, sen sombras duras',
-    watercolor: 'ilustración con textura de acuarela suave, bordos difuminados, aspecto cálido e artesanal'
+    watercolor: 'ilustración con textura de acuarela suave, bordos difuminados, aspecto cálido e artesanal',
+    outline: 'ilustración plana con contorno groso e uniforme arredor das formas; formas sinxelas e claras, sen sombras nin degradados',
+    icons: 'ilustración iconográfica: tres ou catro obxectos ou pictogramas grandes, claros e sinxelos, en estilo vectorial plano, sen escena de fondo',
+    duotone: 'ilustración vectorial plana en duotono; formas sinxelas e limpas, sen sombras duras',
+    geometric: 'ilustración xeométrica minimalista, construída con formas básicas (círculos, rectángulos, triángulos) e moi poucos detalles'
   },
   en: {
     flat: 'modern, clean flat vector illustration; simple shapes, no hard shadows',
     line: 'fine line-art illustration, monochrome, clean continuous strokes, with color only in small accent details',
     isometric: 'modern isometric illustration, simple geometric shapes with slight 3D depth, no hard shadows',
-    watercolor: 'soft watercolor-textured illustration, blurred edges, warm handcrafted look'
+    watercolor: 'soft watercolor-textured illustration, blurred edges, warm handcrafted look',
+    outline: 'flat illustration with a thick, uniform outline around the shapes; simple, clear shapes, no shadows or gradients',
+    icons: 'iconographic illustration: three or four large, clear, simple objects or pictograms in flat vector style, with no background scene',
+    duotone: 'flat duotone vector illustration; simple, clean shapes, no hard shadows',
+    geometric: 'minimalist geometric illustration built from basic shapes (circles, rectangles, triangles) with very few details'
   }
+};
+
+// Frase de paleta adaptada a cada estilo (para que non choque co estilo).
+const IMG_PALETTE_TEXT = {
+  gl: {
+    flat: c => `cor dominante ${c} e tons da mesma familia, con un ou dous acentos cálidos (amarelo ou laranxa) en detalles pequenos. Cores planas e contraste alto.`,
+    line: c => `trazo en tons escuros de ${c} sobre fondo branco, con só un ou dous acentos cálidos (amarelo ou laranxa) mínimos e sen recheos grandes. Contraste alto.`,
+    isometric: c => `${c} en tres niveis de luminosidade da mesma cor para as caras dos obxectos, con un ou dous acentos cálidos (amarelo ou laranxa) en detalles pequenos. Sen degradados e con contraste alto.`,
+    watercolor: c => `${c} en veladuras translúcidas con textura suave, con un ou dous acentos cálidos (amarelo ou laranxa) en pinceladas pequenas. Fondo branco limpo.`,
+    outline: c => `cor dominante ${c} e tons da mesma familia, con contorno nun ton escuro da mesma cor e un ou dous acentos cálidos (amarelo ou laranxa) en detalles pequenos. Cores planas e contraste alto.`,
+    icons: c => `cor dominante ${c} e tons da mesma familia, cun só acento cálido (amarelo ou laranxa) en detalles pequenos. Cores planas e contraste alto.`,
+    duotone: c => `duotono: só dous tons, ${c} e un ton máis escuro ou máis claro da mesma cor, como moito cun acento cálido (amarelo ou laranxa) mínimo. Cores planas e contraste alto.`,
+    geometric: c => `cor dominante ${c} e tons da mesma familia, con un ou dous acentos cálidos (amarelo ou laranxa) en formas pequenas. Cores planas e contraste alto.`
+  },
+  en: {
+    flat: c => `dominant color ${c} and tones from the same family, with one or two warm accents (yellow or orange) in small details. Flat colors, high contrast.`,
+    line: c => `strokes in dark tones of ${c} on a white background, with only one or two minimal warm accents (yellow or orange) and no large fills. High contrast.`,
+    isometric: c => `${c} in three luminosity levels of the same color for the object faces, with one or two warm accents (yellow or orange) in small details. No gradients, high contrast.`,
+    watercolor: c => `${c} in translucent washes with soft texture, with one or two warm accents (yellow or orange) in small brush strokes. Clean white background.`,
+    outline: c => `dominant color ${c} and tones from the same family, with outlines in a dark tone of the same color and one or two warm accents (yellow or orange) in small details. Flat colors, high contrast.`,
+    icons: c => `dominant color ${c} and tones from the same family, with a single warm accent (yellow or orange) in small details. Flat colors, high contrast.`,
+    duotone: c => `duotone: only two tones, ${c} and a darker or lighter tone of the same color, with at most one minimal warm accent (yellow or orange). Flat colors, high contrast.`,
+    geometric: c => `dominant color ${c} and tones from the same family, with one or two warm accents (yellow or orange) in small shapes. Flat colors, high contrast.`
+  }
+};
+const IMG_DENSITY_TEXT = {
+  gl: {scene: '', few: 'Densidade: poucos elementos (tres ou catro), grandes e claros, con moi poucos detalles pequenos, para que se lea ben a tamaño reducido. '},
+  en: {scene: '', few: 'Density: few elements (three or four), large and clear, with very few small details, so it reads well at small sizes. '}
 };
 
 function buildImagePromptCommon(){
@@ -2063,9 +2148,12 @@ function buildImagePromptCommon(){
     : 'contexto educativo xenérico (ex. portátil, aula, xestos de traballo en equipo)';
   const elementos = elementosRaw || elementosDefault;
   const styleKey = $('#in-img-style').value || 'flat';
-  const estilo = IMG_STYLE_TEXT[lang][styleKey];
+  const estilo = IMG_STYLE_TEXT[lang][styleKey] || IMG_STYLE_TEXT[lang].flat;
+  const paleta = (IMG_PALETTE_TEXT[lang][styleKey] || IMG_PALETTE_TEXT[lang].flat)(cor);
+  const densKey = $('#in-img-density').value === 'few' ? 'few' : 'scene';
+  const densidad = IMG_DENSITY_TEXT[lang][densKey];
   const tool = $('#in-img-tool').value || 'generic';
-  return {tema, cor, elementos, estilo, lang, tool, elementosRaw, corCustomRaw};
+  return {tema, cor, elementos, estilo, paleta, densidad, lang, tool, elementosRaw, corCustomRaw};
 }
 
 function toolParams(tool, ratio){
@@ -2074,21 +2162,21 @@ function toolParams(tool, ratio){
 }
 
 function buildImagePromptHorizontal(){
-  const {tema, cor, elementos, estilo, lang, tool} = buildImagePromptCommon();
+  const {tema, cor, elementos, estilo, paleta, densidad, lang, tool} = buildImagePromptCommon();
   const params = toolParams(tool, '16:9');
   if(lang === 'en'){
-    return `Create a panoramic horizontal illustration, 16:9 ratio (approx. 1600 x 900 px), for a teacher-training activity about: ${tema}. Composition: main subject centered, with elements distributed along the horizontal axis, occupying about 70% of the height, with a safety margin of at least 8% free on all edges (no element touches or crosses the edge; do not crop any element). White or very light background, with a soft gradient toward white at the edges, so it blends into the card's white background. Style: ${estilo}. Palette: dominant color ${cor} and tones from the same family, with one or two warm accents (yellow or orange) in small details. Flat colors, high contrast. Visual content: ${elementos}. Restrictions: no text, letters, numbers or logos anywhere in the image, not even on objects (blocks, toys, clocks, boards, pictograms); no identifiable real people; no frames or borders; no watermark. Usage: this image is for the X/Twitter format and for the Moodle course header label.${params}`;
+    return `Create a panoramic horizontal illustration, 16:9 ratio (approx. 1600 x 900 px), for a teacher-training activity about: ${tema}. Composition: main subject centered, with elements distributed along the horizontal axis, occupying about 70% of the height, with a safety margin of at least 8% free on all edges (no element touches or crosses the edge; do not crop any element). White or very light background, with a soft gradient toward white at the edges, so it blends into the card's white background. ${densidad}Style: ${estilo}. Palette: ${paleta} Visual content: ${elementos}. Restrictions: no text, letters, numbers or logos anywhere in the image, not even on objects (blocks, toys, clocks, boards, pictograms); no identifiable real people; no frames or borders; no watermark. Usage: this image is for the X/Twitter format and for the Moodle course header label.${params}`;
   }
-  return `Crea unha ilustración horizontal panorámica, proporción 16:9 (aprox. 1600 x 900 px), para unha actividade de formación do profesorado sobre: ${tema}. Composición: motivo principal centrado, cos elementos distribuídos ao longo do eixe horizontal, ocupando ao redor do 70 % da altura, con marxe de seguridade de polo menos un 8 % libre en todos os bordos (ningún elemento toca nin cruza o bordo; non cortar ningún elemento). Fondo branco ou moi claro, con degradado suave cara ao branco nos bordos, para que se integre no fondo branco da tarxeta. Estilo: ${estilo}. Paleta: cor dominante ${cor} e tons da mesma familia, con un ou dous acentos cálidos (amarelo ou laranxa) en detalles pequenos. Cores planas e contraste alto. Contido visual: ${elementos}. Restricións: sen texto, letras, números nin logotipos en ningunha parte da imaxe, nin sequera en obxectos (cubos, xoguetes, reloxos, paneis, pictogramas); sen persoas reais identificables; sen marcos nin bordos; sen marca de auga. Uso: esta imaxe é para o formato X/Twitter e para a etiqueta de cabeceira de Moodle.${params}`;
+  return `Crea unha ilustración horizontal panorámica, proporción 16:9 (aprox. 1600 x 900 px), para unha actividade de formación do profesorado sobre: ${tema}. Composición: motivo principal centrado, cos elementos distribuídos ao longo do eixe horizontal, ocupando ao redor do 70 % da altura, con marxe de seguridade de polo menos un 8 % libre en todos os bordos (ningún elemento toca nin cruza o bordo; non cortar ningún elemento). Fondo branco ou moi claro, con degradado suave cara ao branco nos bordos, para que se integre no fondo branco da tarxeta. ${densidad}Estilo: ${estilo}. Paleta: ${paleta} Contido visual: ${elementos}. Restricións: sen texto, letras, números nin logotipos en ningunha parte da imaxe, nin sequera en obxectos (cubos, xoguetes, reloxos, paneis, pictogramas); sen persoas reais identificables; sen marcos nin bordos; sen marca de auga. Uso: esta imaxe é para o formato X/Twitter e para a etiqueta de cabeceira de Moodle.${params}`;
 }
 
 function buildImagePromptVertical(){
-  const {tema, cor, elementos, estilo, lang, tool} = buildImagePromptCommon();
+  const {tema, cor, elementos, estilo, paleta, densidad, lang, tool} = buildImagePromptCommon();
   const params = toolParams(tool, '9:16');
   if(lang === 'en'){
-    return `Create a vertical illustration, 9:16 ratio (approx. 1080 x 1920 px), for a teacher-training activity about: ${tema}. Composition: distribute the elements along the whole vertical axis of the frame (some at the top, some in the middle area, some at the bottom), occupying a balanced portion of the total height; avoid concentrating the whole subject in a single centered horizontal band, as if it were a panoramic composition simply cropped and stretched vertically. The most important element should be placed in the upper half of the image (so the center/bottom part can be cropped to a 1:1 square format without losing that main subject). Leave a safety margin of at least 8% free on all edges, including top and bottom (no element touches or crosses the edge; do not crop any element). White or very light background, with a soft gradient toward white at the edges, so it blends into the card's white background. Style: ${estilo}. Palette: dominant color ${cor} and tones from the same family, with one or two warm accents (yellow or orange) in small details. Flat colors, high contrast. Visual content: ${elementos}. Restrictions: no text, letters, numbers or logos anywhere in the image, not even on objects (blocks, toys, clocks, boards, pictograms); no identifiable real people; no frames or borders; no watermark. Usage: this image is for the Instagram square post (cropped to 1:1) and for the Instagram vertical story.${params}`;
+    return `Create a vertical illustration, 9:16 ratio (approx. 1080 x 1920 px), for a teacher-training activity about: ${tema}. Composition: distribute the elements along the whole vertical axis of the frame (some at the top, some in the middle area, some at the bottom), occupying a balanced portion of the total height; avoid concentrating the whole subject in a single centered horizontal band, as if it were a panoramic composition simply cropped and stretched vertically. The most important element should be placed in the upper half of the image (so the center/bottom part can be cropped to a 1:1 square format without losing that main subject). Leave a safety margin of at least 8% free on all edges, including top and bottom (no element touches or crosses the edge; do not crop any element). White or very light background, with a soft gradient toward white at the edges, so it blends into the card's white background. ${densidad}Style: ${estilo}. Palette: ${paleta} Visual content: ${elementos}. Restrictions: no text, letters, numbers or logos anywhere in the image, not even on objects (blocks, toys, clocks, boards, pictograms); no identifiable real people; no frames or borders; no watermark. Usage: this image is for the Instagram square post (cropped to 1:1) and for the Instagram vertical story.${params}`;
   }
-  return `Crea unha ilustración vertical, proporción 9:16 (aprox. 1080 x 1920 px), para unha actividade de formación do profesorado sobre: ${tema}. Composición: distribúe os elementos ao longo de todo o eixe vertical do encadre (algúns na parte superior, outros na zona central e outros na inferior), ocupando de forma equilibrada boa parte da altura total; evita concentrar todo o motivo nunha soa franxa horizontal centrada, coma se fose unha composición panorámica simplemente recortada e estirada en vertical. O elemento máis importante debe situarse na metade superior da imaxe (para que a parte central/inferior poida recortarse ao formato cadrado 1:1 sen perder ese motivo principal). Deixa unha marxe de seguridade de polo menos un 8 % libre en todos os bordos, tamén no superior e no inferior (ningún elemento toca nin cruza o bordo; non cortar ningún elemento). Fondo branco ou moi claro, con degradado suave cara ao branco nos bordos, para que se integre no fondo branco da tarxeta. Estilo: ${estilo}. Paleta: cor dominante ${cor} e tons da mesma familia, con un ou dous acentos cálidos (amarelo ou laranxa) en detalles pequenos. Cores planas e contraste alto. Contido visual: ${elementos}. Restricións: sen texto, letras, números nin logotipos en ningunha parte da imaxe, nin sequera en obxectos (cubos, xoguetes, reloxos, paneis, pictogramas); sen persoas reais identificables; sen marcos nin bordos; sen marca de auga. Uso: esta imaxe é para o cartel cadrado de Instagram (recortada a 1:1) e para a story vertical de Instagram.${params}`;
+  return `Crea unha ilustración vertical, proporción 9:16 (aprox. 1080 x 1920 px), para unha actividade de formación do profesorado sobre: ${tema}. Composición: distribúe os elementos ao longo de todo o eixe vertical do encadre (algúns na parte superior, outros na zona central e outros na inferior), ocupando de forma equilibrada boa parte da altura total; evita concentrar todo o motivo nunha soa franxa horizontal centrada, coma se fose unha composición panorámica simplemente recortada e estirada en vertical. O elemento máis importante debe situarse na metade superior da imaxe (para que a parte central/inferior poida recortarse ao formato cadrado 1:1 sen perder ese motivo principal). Deixa unha marxe de seguridade de polo menos un 8 % libre en todos os bordos, tamén no superior e no inferior (ningún elemento toca nin cruza o bordo; non cortar ningún elemento). Fondo branco ou moi claro, con degradado suave cara ao branco nos bordos, para que se integre no fondo branco da tarxeta. ${densidad}Estilo: ${estilo}. Paleta: ${paleta} Contido visual: ${elementos}. Restricións: sen texto, letras, números nin logotipos en ningunha parte da imaxe, nin sequera en obxectos (cubos, xoguetes, reloxos, paneis, pictogramas); sen persoas reais identificables; sen marcos nin bordos; sen marca de auga. Uso: esta imaxe é para o cartel cadrado de Instagram (recortada a 1:1) e para a story vertical de Instagram.${params}`;
 }
 
 // ---------- Lembrar os últimos "elementos visuais" e cores usados ----------
@@ -2250,6 +2338,7 @@ function getDraftData(withImages){
     moodleW: $('#in-moodle-w').value,
     moodleH: $('#in-moodle-h').value,
     imgStyle: $('#in-img-style').value,
+    imgDensity: $('#in-img-density').value,
     imgLang: $('#in-img-lang').value,
     imgTool: $('#in-img-tool').value,
     carruselMargin: $('#in-carrusel-margin').value,
@@ -2391,6 +2480,7 @@ if(_restoredDraftExtra){
   if(d.moodleW) $('#in-moodle-w').value = d.moodleW;
   if(d.moodleH) $('#in-moodle-h').value = d.moodleH;
   if(d.imgStyle) $('#in-img-style').value = d.imgStyle;
+  if(d.imgDensity) $('#in-img-density').value = d.imgDensity;
   if(d.imgLang) $('#in-img-lang').value = d.imgLang;
   if(d.imgTool) $('#in-img-tool').value = d.imgTool;
   if(d.carruselMargin != null) $('#in-carrusel-margin').value = d.carruselMargin;
@@ -2531,6 +2621,7 @@ function applyImportedActivity(obj){
   if(/^\d+$/.test(str(d.moodleW))) $('#in-moodle-w').value = d.moodleW;
   if(/^\d+$/.test(str(d.moodleH))) $('#in-moodle-h').value = d.moodleH;
   setSelectIfValid($('#in-img-style'), d.imgStyle);
+  setSelectIfValid($('#in-img-density'), d.imgDensity);
   setSelectIfValid($('#in-img-lang'), d.imgLang);
   setSelectIfValid($('#in-img-tool'), d.imgTool);
   if(d.carruselMargin != null) $('#in-carrusel-margin').value = str(String(d.carruselMargin));
@@ -2633,6 +2724,226 @@ $('#btn-gen-post').addEventListener('click', ()=>{
 });
 $('#btn-copy-alt').addEventListener('click', ()=> copyTextFrom('#out-alt', '#btn-copy-alt'));
 $('#btn-copy-post').addEventListener('click', ()=> copyTextFrom('#out-post', '#btn-copy-post'));
+
+
+// ---------- Asistente de ilustración ----------
+// Guía en 5 pasos. Configura os mesmos campos do panel (estilo, densidade,
+// elementos, idioma) e reutiliza os botóns de xerar prompt do panel.
+const wiz = {step: 1, uso: 'todo'};
+const WIZ_STEPS = 5;
+function wizEl(html){
+  const t = document.createElement('template');
+  t.innerHTML = html.trim();
+  return t.content.firstElementChild;
+}
+function wizNeeds(){ return wiz.uso === 'carrusel' ? {h: true, v: false} : {h: true, v: true}; }
+function wizCarrusel(){ return wiz.uso === 'todo' || wiz.uso === 'carrusel'; }
+function wizFire(sel){ const e = $(sel); e.dispatchEvent(new Event('input', {bubbles: true})); e.dispatchEvent(new Event('change', {bubbles: true})); }
+
+function wizRadioGroup(container, name, options, current, onPick){
+  options.forEach(o=>{
+    const lab = wizEl(`<label class="wiz-opt"><input type="radio" name="${name}" value="${o.value}"><span><span class="wiz-title"></span><span class="wiz-sub"></span></span></label>`);
+    lab.querySelector('.wiz-title').textContent = o.title;
+    lab.querySelector('.wiz-sub').textContent = o.sub || '';
+    if(o.badge){
+      const b = wizEl(`<span class="wiz-badge ${o.badge.cls}"></span>`);
+      b.textContent = o.badge.text;
+      lab.querySelector('.wiz-title').after(b);
+    }
+    const inp = lab.querySelector('input');
+    inp.checked = (o.value === current);
+    lab.classList.toggle('sel', inp.checked);
+    inp.addEventListener('change', ()=>{
+      container.querySelectorAll('.wiz-opt').forEach(x => x.classList.remove('sel'));
+      lab.classList.add('sel');
+      onPick(o.value);
+    });
+    container.appendChild(lab);
+  });
+}
+
+function wizStep1(body){
+  body.appendChild(wizEl('<div><h3>1. Para que vas usar a ilustración?</h3><p>Escolle o que mellor se axuste. Só che faremos xerar o que fai falta.</p><div id="wiz-uso"></div></div>'));
+  wizRadioGroup($('#wiz-uso'), 'wiz-uso', [
+    {value: 'todo', title: 'Todo: redes sociais (cadrado, story, X), etiqueta de Moodle e carrusel', sub: 'Fan falta dúas imaxes: unha horizontal e outra vertical.'},
+    {value: 'redes', title: 'Só redes sociais e etiqueta de Moodle (sen carrusel)', sub: 'Fan falta dúas imaxes: unha horizontal e outra vertical.'},
+    {value: 'carrusel', title: 'Só o carrusel de Moodle', sub: 'Chega cunha imaxe horizontal.'}
+  ], wiz.uso, v => { wiz.uso = v; });
+}
+
+function wizStep2(body){
+  body.appendChild(wizEl(`<div><h3>2. De que trata a formación?</h3>
+    <label>Título da actividade</label><input type="text" id="wiz-titulo">
+    <div class="hint">Úsase como tema da ilustración. Se está baleiro, o prompt levará «[TEMA]». Se o cambias aquí, cámbiase tamén no cartel.</div>
+    <label>Que queres que se vexa na imaxe? (elementos visuais)</label>
+    <input type="text" id="wiz-elementos" list="elementos-presets" placeholder="Escolle unha suxestión ou escribe a túa">
+    <div class="hint">Podes escoller unha suxestión da lista ou describir co teu texto (por exemplo, «docentes e alumnado cunha tableta»). Se o deixas baleiro, usarase un contexto educativo xenérico.</div></div>`));
+  $('#wiz-titulo').value = state.titulo || '';
+  $('#wiz-elementos').value = $('#in-img-elementos').value;
+  $('#wiz-titulo').addEventListener('input', ()=>{ $('#in-titulo').value = $('#wiz-titulo').value; $('#in-titulo').dispatchEvent(new Event('input', {bubbles: true})); });
+  $('#wiz-elementos').addEventListener('input', ()=>{ $('#in-img-elementos').value = $('#wiz-elementos').value; wizFire('#in-img-elementos'); });
+}
+
+function wizStep3(body){
+  const car = wizCarrusel();
+  body.appendChild(wizEl('<div><h3>3. Como queres que sexa o aspecto?</h3><p>Escolle un estilo. Se non estás seguro, o «plano» é unha boa opción por defecto.</p><div id="wiz-style"></div><h3>Cantos elementos?</h3><div id="wiz-dens"></div><p class="wiz-body-note" id="wiz-car-note"></p></div>'));
+  const good = {text: 'Recomendado para o carrusel', cls: 'ok'};
+  const bad = {text: 'Pouco recomendado para o carrusel', cls: 'no'};
+  const styles = [
+    {value: 'flat', title: 'Plano', sub: 'Formas de cor lisa, modernas e limpas.', badge: car ? good : null},
+    {value: 'outline', title: 'Plano con contorno groso', sub: 'Formas cun trazo grosso; len ben a tamaño pequeno.', badge: car ? good : null},
+    {value: 'icons', title: 'Iconográfico', sub: 'Poucos obxectos grandes e claros, sen escena de fondo.', badge: car ? good : null},
+    {value: 'duotone', title: 'Duotono', sub: 'Só dous tons da cor principal.', badge: car ? good : null},
+    {value: 'geometric', title: 'Xeométrico minimalista', sub: 'Formas básicas e moi poucos detalles.', badge: car ? good : null},
+    {value: 'line', title: 'Liña fina', sub: 'Debuxo de contorno, máis delicado.'},
+    {value: 'isometric', title: 'Isométrico', sub: 'Obxectos cun pouco de 3D; leva moito detalle.', badge: car ? bad : null},
+    {value: 'watercolor', title: 'Acuarela suave', sub: 'Textura suave e bordos difuminados.', badge: car ? bad : null}
+  ];
+  wizRadioGroup($('#wiz-style'), 'wiz-style', styles, $('#in-img-style').value, v => { $('#in-img-style').value = v; wizFire('#in-img-style'); });
+  wizRadioGroup($('#wiz-dens'), 'wiz-dens', [
+    {value: 'scene', title: 'Escena completa', sub: 'Máis elementos e máis detalle.'},
+    {value: 'few', title: 'Poucos elementos grandes', sub: 'Tres ou catro elementos claros; len mellor a tamaño reducido.'}
+  ], $('#in-img-density').value, v => { $('#in-img-density').value = v; wizFire('#in-img-density'); });
+  $('#wiz-car-note').textContent = car ? 'Para o carrusel, a imaxe vese pequena sobre fondo branco: convén «poucos elementos grandes» e estilos de formas grandes. É unha recomendación orientativa, non probada con todas as ferramentas de IA.' : '';
+}
+
+function wizStep4(body){
+  const need = wizNeeds();
+  body.appendChild(wizEl(`<div><h3>4. Xera o prompt e úsao nunha IA</h3>
+    <label>Idioma do prompt</label>
+    <select id="wiz-lang"><option value="gl">Galego</option><option value="en">Inglés</option></select>
+    <button class="btn-primary" id="wiz-gen" type="button">Xerar ${need.v ? 'os prompts' : 'o prompt'}</button>
+    <div id="wiz-prompts"></div>
+    <h3>Que facer co prompt</h3>
+    <ol>
+      <li>Copia o prompt co botón de copiar.</li>
+      <li>Pégao nunha ferramenta de IA que xere imaxes (por exemplo Gemini ou ChatGPT; as condicións e a dispoñibilidade dependen da túa conta).</li>
+      <li>Se a ferramenta che deixa escoller a proporción da imaxe, escolle <strong>16:9</strong> para a horizontal${need.v ? ' e <strong>9:16</strong> para a vertical' : ''}. A IA adoita ignorala se só está escrita no texto.</li>
+      <li>Descarga a imaxe e cárgaa no paso seguinte.</li>
+    </ol>
+    <p class="wiz-body-note">A ferramenta de destino (xenérica ou Midjourney) pódese cambiar no panel de edición.</p></div>`));
+  $('#wiz-lang').value = $('#in-img-lang').value;
+  $('#wiz-lang').addEventListener('change', ()=>{ $('#in-img-lang').value = $('#wiz-lang').value; wizFire('#in-img-lang'); });
+  const box = $('#wiz-prompts');
+  const blocks = [];
+  if(need.h) blocks.push({k: 'h', label: 'Prompt horizontal (X, Moodle e carrusel)'});
+  if(need.v) blocks.push({k: 'v', label: 'Prompt vertical (cadrado e story)'});
+  blocks.forEach(b=>{
+    const wrap = wizEl(`<div style="display:none;"><label></label><textarea id="wiz-out-${b.k}" readonly style="min-height:110px;font-size:12px;font-family:monospace;"></textarea><button class="btn-secondary" id="wiz-copy-${b.k}" type="button">Copiar prompt</button></div>`);
+    wrap.querySelector('label').textContent = b.label;
+    wrap.id = 'wiz-wrap-' + b.k;
+    box.appendChild(wrap);
+    wrap.querySelector('button').addEventListener('click', ()=> copyTextFrom('#wiz-out-' + b.k, '#wiz-copy-' + b.k));
+  });
+  $('#wiz-gen').addEventListener('click', ()=>{
+    blocks.forEach(b=>{
+      $('#btn-generate-prompt-' + b.k).click(); // reutiliza o xerador do panel (e os "recentes")
+      $('#wiz-out-' + b.k).value = $('#out-img-prompt-' + b.k).value;
+      $('#wiz-wrap-' + b.k).style.display = 'block';
+    });
+  });
+}
+
+// Estimación: fracción de píxeles do bordo (anel de ~2 %) que non son case brancos.
+async function wizBorderNotWhite(src){
+  const im = await loadImageEl(src);
+  const k = 128 / Math.max(im.naturalWidth, im.naturalHeight);
+  const w = Math.max(8, Math.round(im.naturalWidth * k)), h = Math.max(8, Math.round(im.naturalHeight * k));
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const x = c.getContext('2d');
+  x.fillStyle = '#fff'; x.fillRect(0, 0, w, h);
+  x.drawImage(im, 0, 0, w, h);
+  const data = x.getImageData(0, 0, w, h).data;
+  const ring = 2;
+  let n = 0, bad = 0;
+  for(let yy = 0; yy < h; yy++){
+    for(let xx = 0; xx < w; xx++){
+      if(xx >= ring && xx < w - ring && yy >= ring && yy < h - ring) continue;
+      const i = (yy * w + xx) * 4;
+      n++;
+      if(Math.min(data[i], data[i+1], data[i+2]) < 235) bad++;
+    }
+  }
+  return n ? bad / n : 0;
+}
+
+async function wizCheckImage(kind){
+  const prop = kind === 'h' ? 'imgSrcH' : 'imgSrcV';
+  const box = document.getElementById('wiz-res-' + kind);
+  if(!box) return;
+  const src = state[prop];
+  if(!src){ box.textContent = 'Aínda non cargaches esta imaxe.'; return; }
+  const d = await getImgDims(src);
+  if(!d){ box.textContent = 'Non se puido ler a imaxe.'; return; }
+  const ref = kind === 'h' ? 16/9 : 9/16, refTxt = kind === 'h' ? '16:9' : '9:16';
+  const lines = [];
+  lines.push(`<div class="ok">✓ Tamaño: ${d.w} × ${d.h} px.</div>`);
+  const okRatio = Math.abs((d.w/d.h)/ref - 1) < 0.06;
+  lines.push(okRatio
+    ? `<div class="ok">✓ Proporción ${ratioLabel(d.w, d.h)} (a esperada: ${refTxt}).</div>`
+    : `<div class="warn">⚠ Proporción ${ratioLabel(d.w, d.h)}; aquí convén preto de ${refTxt}. Proba a fixar a proporción no selector da ferramenta e xerar de novo.</div>`);
+  let frac = null;
+  try{ frac = await wizBorderNotWhite(src); } catch(e){}
+  if(frac !== null){
+    lines.push(frac > 0.15
+      ? '<div class="warn">⚠ Os bordos non parecen brancos (estimación). No carrusel pode verse un rectángulo; deixa activado «Fundir bordos con branco» ou pide á IA un fondo branco.</div>'
+      : '<div class="ok">✓ Os bordos son claros (estimación).</div>');
+  }
+  if(src === state[prop]) box.innerHTML = lines.join('');
+}
+
+function wizStep5(body){
+  const need = wizNeeds();
+  body.appendChild(wizEl('<div><h3>5. Carga a imaxe e comproba</h3><p>Carga aquí a imaxe que descargaches da IA. A comprobación automática é orientativa.</p><div id="wiz-uploads"></div><h3>Revisa a man</h3><p class="wiz-body-note">A app non pode detectar isto; mira a imaxe e marca cada punto.</p><div id="wiz-manual"></div><p class="wiz-body-note">Podes ver o resultado nas pestanas Cadrado, Story, X, Moodle e Carrusel da vista previa.</p></div>'));
+  const kinds = [];
+  if(need.h) kinds.push({k: 'h', label: 'Ilustración horizontal (X, Moodle e carrusel)'});
+  if(need.v) kinds.push({k: 'v', label: 'Ilustración vertical (cadrado e story)'});
+  kinds.forEach(o=>{
+    const blk = wizEl(`<div><label></label><input type="file" accept="image/*" id="wiz-file-${o.k}"><div class="wiz-res" id="wiz-res-${o.k}"></div></div>`);
+    blk.querySelector('label').textContent = o.label;
+    $('#wiz-uploads').appendChild(blk);
+    blk.querySelector('input').addEventListener('change', e=>{
+      const f = e.target.files[0];
+      if(!f) return;
+      fileToIllustrationDataUrl(f, url=>{
+        if(o.k === 'h') state.imgSrcH = url; else state.imgSrcV = url;
+        renderStage(); persistAllDebounced(); wizCheckImage(o.k);
+      });
+    });
+    wizCheckImage(o.k);
+  });
+  const manual = [
+    'Non hai texto, letras nin números en ningún sitio (tampouco en obxectos como cubos ou reloxos).',
+    'Ningún elemento toca nin sae polo bordo da imaxe.',
+    'O fondo é branco ou moi claro e non hai marco.',
+    'As persoas non parecen persoas reais identificables.'
+  ];
+  if(wizCarrusel()) manual.push('Na pestana Carrusel, a imaxe vese clara a tamaño pequeno.');
+  manual.forEach(t=>{
+    const lab = wizEl('<label class="wiz-opt"><input type="checkbox"><span class="wiz-title"></span></label>');
+    lab.querySelector('.wiz-title').textContent = t;
+    $('#wiz-manual').appendChild(lab);
+  });
+}
+
+function renderWizard(){
+  const body = $('#wiz-body');
+  body.innerHTML = '';
+  $('#wiz-step-label').textContent = `Paso ${wiz.step} de ${WIZ_STEPS}`;
+  $('#btn-wiz-prev').style.visibility = wiz.step === 1 ? 'hidden' : 'visible';
+  $('#btn-wiz-next').textContent = wiz.step === WIZ_STEPS ? 'Rematar' : 'Seguinte';
+  [null, wizStep1, wizStep2, wizStep3, wizStep4, wizStep5][wiz.step](body);
+  body.scrollTop = 0;
+}
+function openWizard(){ wiz.step = 1; renderWizard(); $('#wiz-overlay').style.display = 'flex'; }
+function closeWizard(){ $('#wiz-overlay').style.display = 'none'; }
+$('#btn-wizard-open').addEventListener('click', openWizard);
+$('#btn-wiz-close').addEventListener('click', closeWizard);
+$('#wiz-overlay').addEventListener('click', e=>{ if(e.target.id === 'wiz-overlay') closeWizard(); });
+$('#btn-wiz-prev').addEventListener('click', ()=>{ if(wiz.step > 1){ wiz.step--; renderWizard(); } });
+$('#btn-wiz-next').addEventListener('click', ()=>{
+  if(wiz.step < WIZ_STEPS){ wiz.step++; renderWizard(); } else { closeWizard(); }
+});
 
 // ---------- Export helpers ----------
 function renderOffscreen(fmt, data){
