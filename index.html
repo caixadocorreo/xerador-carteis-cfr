@@ -1111,6 +1111,12 @@ https://github.com/nodeca/pako/blob/main/LICENSE
       <button class="btn-small" id="btn-copy-hex" type="button">Copiar</button>
     </div>
     <div class="hint" id="carrusel-contrast-info">Sae da cor de acento do cartel.</div>
+    <label>Ligazón á imaxe do carrusel (Drive)</label>
+    <input type="text" id="in-carrusel-link" placeholder="https://drive.google.com/file/d/…/view?usp=sharing">
+    <div class="hint">Opcional. Se a pos, vai na columna ImagenURL do .csv; se non, a columna queda baleira.</div>
+    <label style="display:flex;gap:8px;align-items:center;"><input type="checkbox" id="chk-csv-header" style="margin:0;"> Incluír cabeceira no .csv</label>
+    <div class="hint">Desmarcado, o ficheiro leva só a fila de datos, listo para «Importar → Engadir ás filas» no Sheet.</div>
+    <button class="btn-primary js-csv-carrusel" type="button">Descargar datos para o carrusel (.csv)</button>
 
 </div></details>
 <details class="acc" id="acc-moodle"><summary>Banner Moodle (etiqueta)</summary><div class="acc-body">
@@ -1170,6 +1176,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
     <div class="export-bar" id="moodle-export-bar">
       <button id="btn-png-moodle">Descargar PNG (etiqueta Moodle)</button>
       <button id="btn-png-carrusel">Descargar imaxe (carrusel)</button>
+      <button class="js-csv-carrusel" type="button">Descargar datos para o carrusel (.csv)</button>
     </div>
   </main>
 
@@ -1228,6 +1235,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
       <p>O lugar vén sugerido como «CFR de Vigo» e o horario como «De 16:30 a 20:30 horas» (cámbiaos se fai falla). Para o horario hai botóns rápidos (16:30 a 19:30, 16:30 a 20:30, 17:00 a 20:00) e selectores de hora de 15 en 15 minutos. Para as datas hai un calendario: en <strong>Datas soltas</strong> premes cada día («30/09 - 07/10 de 2026») e en <strong>Intervalo</strong> escolles inicio e fin («Do 30/09 ao 22/10 de 2026»). Se cruza de ano, escríbese o ano en cada data. O campo de texto segue sendo editable a man.</p>
       <h3>Varias datas con horarios distintos</h3>
       <p>Con dúas ou máis datas soltas hai dúas opcións, que non se poden usar á vez. <strong>Engadir nota de horarios</strong> pon no cartel unha liña pequena: «Pode haber sesións con diferente horario e duración. Para +info consulte os detalles da actividade en FPROFE.» <strong>Horario distinto por día</strong> permite poñer un horario a cada data; o cartel agrupa as datas co mesmo horario e substitúe as liñas de datas e horario. Se hai máis de 4 liñas avisa de que pode non caber. Aplícase a cadrado, story e X. A etiqueta de Moodle e o carrusel non levan datas nin horario.</p>
+      <h3>Datos para o carrusel (.csv)</h3>
+      <p>O botón <strong>Descargar datos para o carrusel (.csv)</strong> (paso de descarga do asistente, barra de descarga e sección «Imaxe para o carrusel») xera unha fila coas columnas do Sheet do carrusel: Codigo, Titulo, DataInicio, DataFin, HoraInicio, HoraFin, Lugar, Relatores, ImagenURL e CorFondo. DataInicioVisual e Tipo quedan baleiras. A ligazón de Drive é opcional. CorFondo só se enche se a cor de acento non é o azul corporativo. Sen cabeceira, o ficheiro vale para «Importar → Engadir ás filas» en Google Sheets.</p>
       <h3>Como está organizado o panel (modo experto)</h3>
       <ul>
         <li><strong>🪄 Só o asistente de ilustración</strong>: botón arriba do panel, para crear só a ilustración paso a paso.</li>
@@ -1401,7 +1410,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 
 <script>
 // Versión da aplicación: cambiar este número en cada actualización publicada.
-const APP_VERSION = 'v1.8';
+const APP_VERSION = 'v1.9';
 
 const FORMATS = [
   {key:'square', cls:'square', w:1080, h:1080, label:'IG-cadrado'},
@@ -2451,7 +2460,8 @@ function getDraftData(withImages){
     imgTool: $('#in-img-tool').value,
     carruselMargin: $('#in-carrusel-margin').value,
     carruselFade: $('#in-carrusel-fade').checked,
-    carruselFormat: $('#in-carrusel-format').value
+    carruselFormat: $('#in-carrusel-format').value,
+    carruselLink: $('#in-carrusel-link').value
   };
   if(withImages){
     d.imgSrcH = state.imgSrcH;
@@ -2597,6 +2607,7 @@ if(_restoredDraftExtra){
   if(d.carruselMargin != null) $('#in-carrusel-margin').value = d.carruselMargin;
   if(d.carruselFade != null) $('#in-carrusel-fade').checked = !!d.carruselFade;
   if(d.carruselFormat) $('#in-carrusel-format').value = d.carruselFormat;
+  if(typeof d.carruselLink === 'string') $('#in-carrusel-link').value = d.carruselLink;
   readMoodleSize();
 }
 if(safeLocalStorageGet(LS_DRAFT_KEY) || safeLocalStorageGet(LS_PREFS_KEY)){
@@ -2641,6 +2652,7 @@ $('#btn-new-activity').addEventListener('click', ()=>{
   pkFire($('#in-datas')); pkFire($('#in-horario'));
   document.dispatchEvent(new CustomEvent('cfr-sesiones', {detail: null}));
   $('#in-img-elementos').value = '';
+  $('#in-carrusel-link').value = '';
   $('#in-img-color').value = '';
   $('#in-img-h').value = '';
   $('#in-img-v').value = '';
@@ -2750,6 +2762,7 @@ function applyImportedActivity(obj){
   if(d.carruselMargin != null) $('#in-carrusel-margin').value = str(String(d.carruselMargin));
   if(d.carruselFade != null) $('#in-carrusel-fade').checked = !!d.carruselFade;
   setSelectIfValid($('#in-carrusel-format'), d.carruselFormat);
+  $('#in-carrusel-link').value = (typeof d.carruselLink === 'string') ? d.carruselLink.slice(0, 500) : '';
   readMoodleSize();
 
   // preferencias (só se veñen no ficheiro e son válidas)
@@ -3117,6 +3130,71 @@ $('#in-datas').after(makeDatesPicker($('#in-datas')));
 $('#in-horario').after(makeHorarioPicker($('#in-horario')));
 $('#in-horario').parentNode.insertBefore(makeSesionesPanel($('#in-datas')), $('#in-horario').nextElementSibling.nextElementSibling);
 
+// ---------- Datos para o carrusel (.csv) ----------
+// Mesma orde de columnas ca no Sheet do carrusel (A–L).
+const CSV_CABECEIRA = ['DataInicioVisual','Codigo','Titulo','DataInicio','DataFin','HoraInicio','HoraFin','Lugar','Relatores','ImagenURL','CorFondo','Tipo'];
+function datasRango(raw){
+  raw = (raw || '').trim();
+  const one = (t, dy)=>{
+    const m = /^(\d{2})\/(\d{2})(?:\/(\d{4}))?$/.exec(t.trim()); if(!m) return null;
+    const y = m[3] ? +m[3] : dy, mo = +m[2] - 1, d = +m[1];
+    const x = new Date(y, mo, d);
+    return (y && x.getFullYear() === y && x.getMonth() === mo && x.getDate() === d) ? `${y}-${m[2]}-${m[1]}` : null;
+  };
+  const r = /^Do (\d{2}\/\d{2}(?:\/\d{4})?) ao (\d{2}\/\d{2}(?:\/\d{4})?)(?: de (\d{4}))?$/.exec(raw);
+  if(r){ const a = one(r[1], r[3] ? +r[3] : 0), b = one(r[2], r[3] ? +r[3] : 0); return (a && b) ? {ini: a < b ? a : b, fin: a < b ? b : a} : null; }
+  const p = parseDatasText(raw);
+  if(p && p.mode === 'loose' && p.keys.length){ const v = [...p.keys].sort(); return {ini: v[0], fin: v[v.length - 1]}; }
+  return null;
+}
+function keyToDmy(k){ return k ? `${k.slice(8, 10)}/${k.slice(5, 7)}/${k.slice(0, 4)}` : ''; }
+function csvDatos(){
+  const avisos = [];
+  const cod = (state.codigo || '').trim();
+  const tit = (state.titulo || '').replace(/\s*[\r\n]+\s*/g, ' ').trim();
+  if(!cod) avisos.push('O código está baleiro.');
+  if(!tit) avisos.push('O título está baleiro.');
+  const rg = datasRango(state.datas);
+  if(!rg) avisos.push('Non se puido sacar a data de inicio e fin do texto das datas: as columnas DataInicio e DataFin irán baleiras.');
+  let hi = '', hf = '';
+  const g = sessionGroups(state);
+  if(g){
+    const hs = state.detalle.items.map(i => i.h.split(' a '));
+    hi = hs.map(x => x[0]).sort()[0]; hf = hs.map(x => x[1]).sort().slice(-1)[0];
+  } else {
+    const m = /(\d{2}:\d{2})\s*a\s*(\d{2}:\d{2})/.exec(state.horario || '');
+    if(m){ hi = m[1]; hf = m[2]; } else avisos.push('Non se puido sacar a hora de inicio e fin do horario: HoraInicio e HoraFin irán baleiras.');
+  }
+  const rel = (state.ponentes || '').split('\n').map(x => x.trim()).filter(Boolean).join('; ');
+  const link = ($('#in-carrusel-link').value || '').trim();
+  if(link && !/^https:\/\/drive\.google\.com\//.test(link)) avisos.push('A ligazón á imaxe non empeza por https://drive.google.com/ : revísaa.');
+  const infos = link ? [] : ['Sen ligazón á imaxe: a columna ImagenURL irá baleira (envía a ligazón á parte).'];
+  let cor = '';
+  const rgb = parseColorToRgb(state.accentColor), def = parseColorToRgb(INSTITUTIONAL_BLUE);
+  if(rgb && !(def && rgb[0] === def[0] && rgb[1] === def[1] && rgb[2] === def[2])) cor = rgbToHex(rgb);
+  const f = ['', cod, tit, rg ? keyToDmy(rg.ini) : '', rg ? keyToDmy(rg.fin) : '', hi, hf, (state.lugar || '').trim(), rel, link, cor, ''];
+  return {fields: f, avisos, infos};
+}
+function csvQuote(v){ return '"' + String(v).replace(/"/g, '""') + '"'; }
+function csvText(withHeader){
+  const rows = [];
+  if(withHeader) rows.push(CSV_CABECEIRA.map(csvQuote).join(','));
+  rows.push(csvDatos().fields.map(csvQuote).join(','));
+  return rows.join('\r\n') + '\r\n';
+}
+function descargarCsvCarrusel(){
+  const d = csvDatos();
+  // «sen ligazón» é só informativo (non pide confirmación)
+  if(!confirmAvisos(d.avisos)) return;
+  const blob = new Blob(['﻿' + csvText($('#chk-csv-header').checked)], {type: 'text/csv;charset=utf-8'});
+  const a = document.createElement('a');
+  a.download = `${safeFileName(state.codigo) || 'actividade'}_carrusel.csv`;
+  a.href = URL.createObjectURL(blob);
+  a.click();
+  setTimeout(()=> URL.revokeObjectURL(a.href), 2000);
+}
+document.querySelectorAll('.js-csv-carrusel').forEach(b => b.addEventListener('click', descargarCsvCarrusel));
+
 // ---------- Asistente de ilustración ----------
 // Guía en 5 pasos. Configura os mesmos campos do panel (estilo, densidade,
 // elementos, idioma) e reutiliza os botóns de xerar prompt do panel.
@@ -3457,6 +3535,24 @@ function wizFDescarga(body){
   const js = wizEl('<button class="btn-secondary" type="button" style="margin:3px 0;">💾 Gardar copia da actividade (.json)</button>');
   js.addEventListener('click', ()=> $('#btn-export-json').click());
   dl.appendChild(z); dl.appendChild(pdf); dl.appendChild(js);
+  const cb = wizEl('<div><h4 style="margin:14px 0 4px;">Datos para o carrusel (.csv)</h4><div class="hint" style="margin:0 0 4px;">Fila co orde de columnas do Sheet do carrusel. Envíaa á persoa responsable xunto coa ligazón á imaxe (ou pon a ligazón aquí e vai no ficheiro).</div><label>Ligazón á imaxe do carrusel (Drive, opcional)</label><input type="text" id="wiz-d-link" placeholder="https://drive.google.com/file/d/…/view?usp=sharing"><div id="wiz-csv-prev"></div><label style="display:flex;gap:8px;align-items:center;font-weight:500;margin:6px 0;"><input type="checkbox" id="wiz-csv-head" style="margin:0;"> Incluír cabeceira</label></div>');
+  dl.appendChild(cb);
+  const lk = cb.querySelector('#wiz-d-link'), hd = cb.querySelector('#wiz-csv-head');
+  lk.value = $('#in-carrusel-link').value; hd.checked = $('#chk-csv-header').checked;
+  const prev = ()=>{
+    const d = csvDatos(); const box = cb.querySelector('#wiz-csv-prev'); box.innerHTML = '';
+    const t = document.createElement('div'); t.className = 'wiz-res';
+    CSV_CABECEIRA.forEach((c, i)=>{ if(!d.fields[i]) return; const r = document.createElement('div'); const b = document.createElement('b'); b.textContent = c + ': '; r.appendChild(b); r.appendChild(document.createTextNode(d.fields[i])); t.appendChild(r); });
+    box.appendChild(t);
+    d.avisos.forEach(a=>{ const w = document.createElement('div'); w.className = 'wiz-res'; const sp = document.createElement('span'); sp.className = 'warn'; sp.textContent = '⚠ ' + a; w.appendChild(sp); box.appendChild(w); });
+    d.infos.forEach(a=>{ const w = document.createElement('div'); w.className = 'wiz-body-note'; w.textContent = 'ℹ ' + a; box.appendChild(w); });
+  };
+  lk.addEventListener('input', ()=>{ $('#in-carrusel-link').value = lk.value; $('#in-carrusel-link').dispatchEvent(new Event('input', {bubbles: true})); prev(); });
+  hd.addEventListener('change', ()=>{ $('#chk-csv-header').checked = hd.checked; });
+  const bt = wizEl('<button class="btn-primary" type="button" style="margin:3px 0;">Descargar datos para o carrusel (.csv)</button>');
+  bt.addEventListener('click', descargarCsvCarrusel);
+  cb.appendChild(bt);
+  prev();
   const hex = $('#out-carrusel-hex').value;
   $('#wiz-hex-note').textContent = hex ? `Para o carrusel: cor para a columna K («CorFondo») da folla: ${hex}.` : '';
 }
