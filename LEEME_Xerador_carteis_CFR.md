@@ -35,6 +35,17 @@ Funciona igual no asistente completo e no panel experto.
 
 ---
 
+## Varias datas con horarios distintos (v1.8)
+
+Aparece baixo o calendario cando hai polo menos 2 datas soltas (non vale o modo «Intervalo»). As dúas opcións son excluíntes.
+
+- **Engadir nota de horarios:** liña pequena baixo o horario: «Pode haber sesións con diferente horario e duración. Para +info consulte os detalles da actividade en FPROFE.» O programa suxire usala cando hai varias datas.
+- **Horario distinto por día:** cada data leva o seu horario (selectores de 15 en 15 minutos). O cartel agrupa as datas co mesmo horario, por exemplo «30/09, 07/10 e 22/10 de 2026 · De 16:30 a 20:30 horas» e «14/10 de 2026 · De 17:00 a 20:00 horas». Substitúe as liñas de datas e horario. Se hai máis de 4 liñas, avisa de que pode non caber.
+- Aplícase a cadrado, story e X. Moodle e carrusel non levan datas nin horario.
+- O texto alternativo e o texto para redes usan o detalle (ou a nota). Gárdase no .json.
+
+---
+
 ## Como está organizado o panel de edición (modo experto)
 
 - **🪄 Só o asistente de ilustración**: botón arriba do panel (e tamén na sección 2), para crear a ilustración paso a paso.
@@ -194,7 +205,7 @@ Antes de exportar, se falta a ilustración horizontal (necesaria tamén para o c
 - As **preferencias** (cor de acento, aliñamento, logos) gárdanse á parte do **borrador** (os datos concretos da actividade) — así podes limpar unha actividade sen perder a túa configuración habitual.
 - **⬇ Exportar / ⬆ Importar actividade (.json)**: copia de seguridade ou traslado a outro ordenador ou persoa. Inclúe texto, patróns, axustes, cores e opcións do carrusel; coa caixa «Incluír ilustracións e logos» marcada, tamén as imaxes (o ficheiro pesa máis). Importar substitúe a actividade actual, tras confirmación; se o ficheiro non trae ilustracións, mantéñense as cargadas.
 - **Textos para as redes**: xera un texto alternativo e un texto de publicación a partir dos datos do cartel (código, título, persoas relatoras, lugar, datas e horario), editables e con botón de copiar. Non describen a ilustración.
-- **Versión**: o número (agora v1.7) aparece ao final do panel de edición e na axuda. Para cambialo, edítase a constante `APP_VERSION` no código.
+- **Versión**: o número (agora v1.8) aparece ao final do panel de edición e na axuda. Para cambialo, edítase a constante `APP_VERSION` no código.
 - **Aviso de garda**: o texto e as ilustracións gárdanse por separado. Se as imaxes non caben no almacenamento do navegador, aparece un aviso e o texto gárdase igual. Ao estar a ferramenta publicada, a garda é **por navegador e por enderezo**: non se comparte entre ordenadores; para iso serve o .json.
 - **🗑️ Nova actividade**: limpa código, título, ponentes, lugar, datas, horario, ilustracións e patróns, para empezar unha actividade nova de cero. Pide confirmación antes de borrar. A cor de acento, o aliñamento e os logos cargados **non** se ven afectados.
 

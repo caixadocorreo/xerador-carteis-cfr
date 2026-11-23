@@ -635,6 +635,9 @@ https://github.com/nodeca/pako/blob/main/LICENSE
   .poster .f-ponentes p{margin:0;font-weight:600;}
   .poster .meta-item{display:flex;align-items:flex-start;gap:8px;font-weight:600;}
   .poster .meta-item svg{flex-shrink:0;fill:#fff;}
+  .poster .meta-note{font-size:0.78em;font-weight:500;line-height:1.3;opacity:0.95;}
+  .poster .f-datas .ses-line{display:block;}
+  .poster .f-datas .ses-line + .ses-line{margin-top:0.35em;}
   .poster .illustration{
     flex:1;
     display:flex;
@@ -1223,6 +1226,8 @@ https://github.com/nodeca/pako/blob/main/LICENSE
       <p>O botón <strong>🧭 Asistente completo</strong> guía en 8 pasos: datos, formatos (cadrado, story e X; Moodle e carrusel van sempre incluídos), ilustración, revisión e descarga. Ábrese só ao comezar unha actividade sen datos. Se pechas a páxina a medias, o botón <strong>▶ Continuar onde o deixei</strong> retoma o paso. <strong>Pasar ao modo experto</strong> deixa de abrilo automaticamente: o panel de edición é o modo experto e funciona como sempre.</p>
       <h3>Lugar, horario e datas</h3>
       <p>O lugar vén sugerido como «CFR de Vigo» e o horario como «De 16:30 a 20:30 horas» (cámbiaos se fai falla). Para o horario hai botóns rápidos (16:30 a 19:30, 16:30 a 20:30, 17:00 a 20:00) e selectores de hora de 15 en 15 minutos. Para as datas hai un calendario: en <strong>Datas soltas</strong> premes cada día («30/09 - 07/10 de 2026») e en <strong>Intervalo</strong> escolles inicio e fin («Do 30/09 ao 22/10 de 2026»). Se cruza de ano, escríbese o ano en cada data. O campo de texto segue sendo editable a man.</p>
+      <h3>Varias datas con horarios distintos</h3>
+      <p>Con dúas ou máis datas soltas hai dúas opcións, que non se poden usar á vez. <strong>Engadir nota de horarios</strong> pon no cartel unha liña pequena: «Pode haber sesións con diferente horario e duración. Para +info consulte os detalles da actividade en FPROFE.» <strong>Horario distinto por día</strong> permite poñer un horario a cada data; o cartel agrupa as datas co mesmo horario e substitúe as liñas de datas e horario. Se hai máis de 4 liñas avisa de que pode non caber. Aplícase a cadrado, story e X. A etiqueta de Moodle e o carrusel non levan datas nin horario.</p>
       <h3>Como está organizado o panel (modo experto)</h3>
       <ul>
         <li><strong>🪄 Só o asistente de ilustración</strong>: botón arriba do panel, para crear só a ilustración paso a paso.</li>
@@ -1347,14 +1352,15 @@ https://github.com/nodeca/pako/blob/main/LICENSE
         <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 2C7.6 2 4 5.6 4 10c0 5.4 7 11.5 7.3 11.7.2.2.5.3.7.3s.5-.1.7-.3C13 21.5 20 15.4 20 10c0-4.4-3.6-8-8-8zm0 11c-1.7 0-3-1.3-3-3s1.3-3 3-3 3 1.3 3 3-1.3 3-3 3z"/></svg>
         <span class="f-lugar"></span>
       </div>
-      <div class="meta-item">
+      <div class="meta-item m-datas">
         <svg width="18" height="18" viewBox="0 0 24 24"><path d="M7 2v2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2h-2V2h-2v2H9V2H7zM5 9h14v11H5V9z"/></svg>
-        <span class="f-datas"></span>
+        <div class="f-datas"></div>
       </div>
-      <div class="meta-item">
+      <div class="meta-item m-horario">
         <svg width="18" height="18" viewBox="0 0 24 24"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm1 10.4l4 2.3-.7 1.2-4.8-2.8V6.5h1.5v5.9z"/></svg>
         <span class="f-horario"></span>
       </div>
+      <div class="meta-note f-nota" style="display:none;"></div>
     </div>
   </div>
   <div class="illustration">
@@ -1395,7 +1401,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 
 <script>
 // Versión da aplicación: cambiar este número en cada actualización publicada.
-const APP_VERSION = 'v1.7';
+const APP_VERSION = 'v1.8';
 
 const FORMATS = [
   {key:'square', cls:'square', w:1080, h:1080, label:'IG-cadrado'},
@@ -1488,8 +1494,22 @@ function fitTitle(node, fmt){
   }
 }
 
+function sanitizeDetalle(v){
+  const out = {on: false, items: []};
+  if(!v || typeof v !== 'object') return out;
+  out.on = v.on === true;
+  if(Array.isArray(v.items)){
+    v.items.slice(0, 40).forEach(i=>{
+      if(i && typeof i.k === 'string' && typeof i.h === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(i.k) && /^\d{2}:\d{2} a \d{2}:\d{2}$/.test(i.h)) out.items.push({k: i.k, h: i.h});
+    });
+  }
+  if(out.items.length < 2) out.on = false;
+  return out;
+}
 let state = {
   fmtSel:{square:true, story:true, xformat:true},
+  nota:false,
+  detalle:{on:false, items:[]},
   codigo:'V2601030',
   titulo:'Saúde mental e benestar na aula',
   ponentes:'Jeniffer L. Herbón Otero\nBoas prácticas de centro:\n- Marilú Bangueses Pereiras\n- Óscar Prego Boente',
@@ -1677,8 +1697,19 @@ function fillPoster(node, data){
   });
 
   node.querySelector('.f-lugar').textContent = data.lugar;
-  node.querySelector('.f-datas').textContent = data.datas;
-  node.querySelector('.f-horario').textContent = data.horario;
+  const gv = sessionGroups(data);
+  const datasEl = node.querySelector('.f-datas');
+  const mHor = node.querySelector('.m-horario'), notaEl = node.querySelector('.f-nota');
+  if(gv){
+    datasEl.innerHTML = '';
+    gv.forEach(g=>{ const l = document.createElement('span'); l.className = 'ses-line'; l.textContent = g.texto; datasEl.appendChild(l); });
+    mHor.style.display = 'none'; notaEl.style.display = 'none';
+  } else {
+    datasEl.textContent = data.datas;
+    mHor.style.display = '';
+    node.querySelector('.f-horario').textContent = data.horario;
+    if(data.nota){ notaEl.textContent = NOTA_HORARIOS; notaEl.style.display = ''; } else { notaEl.style.display = 'none'; }
+  }
 
   // X/Twitter usa a ilustración horizontal; cadrado e story usan a vertical
   const fmtKey = node.classList.contains('xformat') ? 'xformat' : (node.classList.contains('story') ? 'story' : 'square');
@@ -2406,6 +2437,8 @@ function getDraftData(withImages){
     horario: $('#in-horario').value,
     layouts: state.layouts,
     fmtSel: state.fmtSel,
+    nota: state.nota,
+    detalle: state.detalle,
     fit: state.fit,
     focus: state.focus,
     elementos: $('#in-img-elementos').value,
@@ -2484,6 +2517,8 @@ const persistAllDebounced = debounce(persistAll, 500);
       if(d.datas != null) state.datas = d.datas;
       if(d.horario != null) state.horario = d.horario;
       if(d.layouts) state.layouts = Object.assign({}, state.layouts, d.layouts);
+      if(typeof d.nota === 'boolean') state.nota = d.nota;
+      state.detalle = sanitizeDetalle(d.detalle);
       if(d.fmtSel && typeof d.fmtSel === 'object'){ ['square','story','xformat'].forEach(k=>{ if(typeof d.fmtSel[k] === 'boolean') state.fmtSel[k] = d.fmtSel[k]; }); }
       if(d.fit) state.fit = Object.assign({}, state.fit, d.fit);
       if(d.focus){
@@ -2592,6 +2627,8 @@ $('#btn-new-activity').addEventListener('click', ()=>{
   state.imgSrcV = null;
   state.layouts = {square:'standard', story:'standard', xformat:'side'};
   state.fmtSel = {square:true, story:true, xformat:true};
+  state.nota = false;
+  state.detalle = {on:false, items:[]};
   state.fit = {square:'cover-top', story:'cover-center', xformat:'contain', moodle:'contain'};
   state.focus = {square:{x:50,y:0}, story:{x:50,y:50}};
   ['square','story','xformat','moodle'].forEach(k=>{ const sf = document.getElementById('in-fit-' + k); if(sf) sf.value = state.fit[k]; });
@@ -2602,6 +2639,7 @@ $('#btn-new-activity').addEventListener('click', ()=>{
   $('#in-datas').value = '';
   $('#in-horario').value = DEFAULT_HORARIO;
   pkFire($('#in-datas')); pkFire($('#in-horario'));
+  document.dispatchEvent(new CustomEvent('cfr-sesiones', {detail: null}));
   $('#in-img-elementos').value = '';
   $('#in-img-color').value = '';
   $('#in-img-h').value = '';
@@ -2683,6 +2721,8 @@ function applyImportedActivity(obj){
     if(d.fit) setSelectIfValid(sel, d.fit[k]);
     state.fit[k] = sel.value;
   });
+  state.nota = (d.nota === true);
+  state.detalle = sanitizeDetalle(d.detalle);
   state.fmtSel = {square:true, story:true, xformat:true};
   if(d.fmtSel && typeof d.fmtSel === 'object'){ ['square','story','xformat'].forEach(k=>{ if(typeof d.fmtSel[k] === 'boolean') state.fmtSel[k] = d.fmtSel[k]; }); }
   state.focus = {square:{x:50,y:0}, story:{x:50,y:50}};
@@ -2769,8 +2809,13 @@ function buildAltText(){
   parts.push(`Cartel da actividade formativa${cod ? ' ' + cod : ''}${tit ? ': ' + tit : ''}.`);
   if(rel) parts.push(`Con: ${rel}.`);
   if((state.lugar || '').trim()) parts.push(`Lugar: ${state.lugar.trim()}.`);
-  if((state.datas || '').trim()) parts.push(`Datas: ${state.datas.trim()}.`);
-  if((state.horario || '').trim()) parts.push(`Horario: ${state.horario.trim()}.`);
+  const g = sessionGroups(state);
+  if(g){ parts.push('Datas e horarios: ' + g.map(x => `${x.fechas}, ${x.horario.toLowerCase()}`).join('; ') + '.'); }
+  else {
+    if((state.datas || '').trim()) parts.push(`Datas: ${state.datas.trim()}.`);
+    if((state.horario || '').trim()) parts.push(`Horario: ${state.horario.trim()}.`);
+    if(state.nota) parts.push(NOTA_HORARIOS);
+  }
   return parts.join(' ');
 }
 function buildPostText(){
@@ -2780,8 +2825,13 @@ function buildPostText(){
   lines.push(`Actividade formativa${tit ? ': ' + tit : ''}${cod ? ' (' + cod + ')' : ''}`);
   if(rel) lines.push(`Persoas relatoras: ${rel}`);
   if((state.lugar || '').trim()) lines.push(`Lugar: ${state.lugar.trim()}`);
-  if((state.datas || '').trim()) lines.push(`Datas: ${state.datas.trim()}`);
-  if((state.horario || '').trim()) lines.push(`Horario: ${state.horario.trim()}`);
+  const g = sessionGroups(state);
+  if(g){ lines.push('Datas e horarios:'); g.forEach(x => lines.push(`- ${x.fechas}: ${x.horario}`)); }
+  else {
+    if((state.datas || '').trim()) lines.push(`Datas: ${state.datas.trim()}`);
+    if((state.horario || '').trim()) lines.push(`Horario: ${state.horario.trim()}`);
+    if(state.nota) lines.push(NOTA_HORARIOS);
+  }
   return lines.join('\n');
 }
 async function copyTextFrom(textareaSel, btnSel){
@@ -2951,9 +3001,121 @@ function makeDatesPicker(target){
   sync();
   return box;
 }
+
+// ---------- Nota de horarios e detalle por día ----------
+const NOTA_HORARIOS = 'Pode haber sesións con diferente horario e duración. Para +info consulte os detalles da actividade en FPROFE.';
+const DETALLE_MAX_LINES = 4;
+function listaGl(arr){ return arr.length <= 1 ? (arr[0] || '') : arr.slice(0, -1).join(', ') + ' e ' + arr[arr.length - 1]; }
+// Grupos de datas co mesmo horario (só se o detalle está activo e válido).
+function sessionGroups(data){
+  const det = data && data.detalle;
+  if(!det || !det.on || !Array.isArray(det.items) || det.items.length < 2) return null;
+  const items = det.items.filter(i => /^\d{4}-\d{2}-\d{2}$/.test(i.k) && /^\d{2}:\d{2} a \d{2}:\d{2}$/.test(i.h)).sort((a, b) => a.k < b.k ? -1 : (a.k > b.k ? 1 : 0));
+  if(items.length < 2) return null;
+  const years = new Set(items.map(i => i.k.slice(0, 4)));
+  const multiYear = years.size > 1;
+  const order = [], map = {};
+  items.forEach(i=>{ if(!map[i.h]){ map[i.h] = []; order.push(i.h); } map[i.h].push(i.k); });
+  return order.map(h=>{
+    const ks = map[h];
+    const ds = ks.map(k => k.slice(8, 10) + '/' + k.slice(5, 7) + (multiYear ? '/' + k.slice(0, 4) : ''));
+    const [ini, fin] = h.split(' a ');
+    const fechas = listaGl(ds) + (multiYear ? '' : ' de ' + ks[0].slice(0, 4));
+    return {fechas, horario: `De ${ini} a ${fin} horas`, texto: `${fechas} · De ${ini} a ${fin} horas`};
+  });
+}
+// Le as datas escritas no campo: {mode, keys} ou null se non entende o formato.
+function parseDatasText(raw){
+  raw = (raw || '').trim();
+  const val = (y, m, d) => { const x = new Date(y, m, d); return x.getFullYear() === y && x.getMonth() === m && x.getDate() === d; };
+  const one = (t, dy)=>{
+    const m = /^(\d{2})\/(\d{2})(?:\/(\d{4}))?$/.exec(t.trim()); if(!m) return null;
+    const y = m[3] ? +m[3] : dy, mo = +m[2] - 1, d = +m[1];
+    return (y && val(y, mo, d)) ? `${y}-${pad2(mo + 1)}-${pad2(d)}` : null;
+  };
+  if(/^Do /.test(raw)) return {mode: 'range', keys: []};
+  const dm = /^(.*?)(?: de (\d{4}))?$/.exec(raw);
+  if(!dm[1]) return null;
+  const ks = dm[1].split(' - ').map(x => one(x, dm[2] ? +dm[2] : 0));
+  return (ks.length && ks.every(Boolean)) ? {mode: 'loose', keys: ks} : null;
+}
+function defaultSesionHorario(){
+  const m = /^De (\d{2}:\d{2}) a (\d{2}:\d{2}) horas$/.exec((state.horario || '').trim());
+  return m ? `${m[1]} a ${m[2]}` : '16:30 a 20:30';
+}
+function sesionesAviso(){
+  const g = sessionGroups(state);
+  if(!g) return '';
+  const bad = state.detalle.items.some(i => { const [a, b] = i.h.split(' a '); return b <= a; });
+  if(bad) return 'Hai unha sesión cuxa hora de fin non é posterior á de inicio.';
+  if(g.length > DETALLE_MAX_LINES) return `O detalle de horarios ten ${g.length} liñas: pode non caber no cartel. Considera usar a nota de horarios.`;
+  return '';
+}
+function makeSesionesPanel(target){
+  const box = document.createElement('div'); box.className = 'pk';
+  const uid = 'ses' + Math.random().toString(36).slice(2, 8);
+  box.innerHTML = `<label style="display:flex;gap:6px;align-items:center;font-weight:600;font-size:12.5px;margin:0 0 4px;"><input type="checkbox" class="ses-on" style="margin:0;"> Horario distinto por día</label>
+    <div class="ses-list"></div>
+    <label style="display:flex;gap:6px;align-items:center;font-weight:600;font-size:12.5px;margin:6px 0 2px;"><input type="checkbox" class="ses-nota" style="margin:0;"> Engadir nota de horarios</label>
+    <div class="hint ses-hint"></div><div class="pk-warn ses-warn"></div>`;
+  const on = box.querySelector('.ses-on'), nota = box.querySelector('.ses-nota'), list = box.querySelector('.ses-list'), hint = box.querySelector('.ses-hint'), warn = box.querySelector('.ses-warn');
+  const opts = ['<option value="">--:--</option>'];
+  for(let h = 6; h <= 23; h++) for(let m = 0; m < 60; m += 15) opts.push(`<option value="${pad2(h)}:${pad2(m)}">${pad2(h)}:${pad2(m)}</option>`);
+  const optsHtml = opts.join('');
+  function commit(){
+    renderStage(); persistAllDebounced();
+    document.dispatchEvent(new CustomEvent('cfr-sesiones', {detail: box}));
+  }
+  function datesNow(){
+    const p = parseDatasText($('#in-datas').value); // o campo do panel é a fonte de verdade
+    return (p && p.mode === 'loose' && p.keys.length >= 2) ? [...new Set(p.keys)].sort() : null;
+  }
+  function draw(){
+    const ks = datesNow();
+    // sincroniza items cos días do calendario
+    if(ks){
+      const prev = {}; state.detalle.items.forEach(i => { prev[i.k] = i.h; });
+      state.detalle.items = ks.map(k => ({k, h: prev[k] || defaultSesionHorario()}));
+    } else if(state.detalle.on){
+      state.detalle.on = false;
+    }
+    on.disabled = !ks; on.checked = !!state.detalle.on && !!ks;
+    nota.disabled = !!state.detalle.on; nota.checked = !!state.nota && !state.detalle.on;
+    list.innerHTML = '';
+    if(on.checked){
+      state.detalle.items.forEach(it=>{
+        const row = document.createElement('div'); row.className = 'pk-row';
+        const [ini, fin] = it.h.split(' a ');
+        row.innerHTML = `<span style="min-width:44px;font-size:12.5px;font-weight:600;"></span><select class="a">${optsHtml}</select> a <select class="b">${optsHtml}</select>`;
+        row.querySelector('span').textContent = it.k.slice(8, 10) + '/' + it.k.slice(5, 7);
+        const a = row.querySelector('.a'), b = row.querySelector('.b');
+        a.value = ini; b.value = fin;
+        const upd = ()=>{ if(a.value && b.value){ const cur = state.detalle.items.find(x => x.k === it.k); if(cur) cur.h = `${a.value} a ${b.value}`; commit(); } };
+        a.addEventListener('change', upd); b.addEventListener('change', upd);
+        list.appendChild(row);
+      });
+    }
+    hint.textContent = !ks ? 'O horario por día precisa polo menos 2 datas soltas escollidas no calendario.' :
+      (!on.checked && !nota.checked ? 'Hai varias datas: se os horarios cambian, activa o horario por día ou a nota.' :
+      (nota.checked ? 'Sairá no cartel: «' + NOTA_HORARIOS + '»' : 'As datas co mesmo horario agrúpanse nunha liña.'));
+    warn.textContent = on.checked ? sesionesAviso() : '';
+  }
+  on.addEventListener('change', ()=>{
+    state.detalle.on = on.checked;
+    if(on.checked) state.nota = false;
+    draw(); commit();
+  });
+  nota.addEventListener('change', ()=>{ state.nota = nota.checked; draw(); commit(); });
+  target.addEventListener('input', ()=>{ draw(); if(state.detalle.on || state.detalle.items.length) { renderStage(); persistAllDebounced(); } });
+  document.addEventListener('cfr-sesiones', e=>{ if(e.detail !== box) draw(); });
+  draw();
+  box.redraw = draw;
+  return box;
+}
 // Panel experto: pon os selectores baixo os campos de datas e horario.
 $('#in-datas').after(makeDatesPicker($('#in-datas')));
 $('#in-horario').after(makeHorarioPicker($('#in-horario')));
+$('#in-horario').parentNode.insertBefore(makeSesionesPanel($('#in-datas')), $('#in-horario').nextElementSibling.nextElementSibling);
 
 // ---------- Asistente de ilustración ----------
 // Guía en 5 pasos. Configura os mesmos campos do panel (estilo, densidade,
@@ -3226,6 +3388,7 @@ function wizFDatos(body){
     .forEach(([k,id])=> wizBindField('#wiz-d-' + k, id));
   $('#wiz-pk-datas').appendChild(makeDatesPicker($('#wiz-d-datas')));
   $('#wiz-pk-horario').appendChild(makeHorarioPicker($('#wiz-d-horario')));
+  $('#wiz-pk-horario').appendChild(makeSesionesPanel($('#wiz-d-datas')));
 }
 function wizFFormatos(body){
   body.appendChild(wizEl(`<div><h3>2. Que formatos necesitas?</h3>
@@ -3259,7 +3422,8 @@ function wizFRevision(body){
     av.forEach(a=>{ const d = wizEl('<div class="wiz-res"><span class="warn">⚠ </span><span class="t"></span></div>'); d.querySelector('.t').textContent = a; box.appendChild(d); });
   }
   const conf = wizEl('<div class="wiz-res"><b>Confirma estes datos:</b><br><span class="c"></span></div>');
-  conf.querySelector('.c').textContent = `Lugar: ${state.lugar || '(baleiro)'} · Horario: ${state.horario || '(baleiro)'} · Datas: ${state.datas || '(baleiro)'}`;
+  const gg = sessionGroups(state);
+  conf.querySelector('.c').textContent = gg ? `Lugar: ${state.lugar || '(baleiro)'} · Datas e horarios: ${gg.map(x => x.texto).join(' | ')}` : `Lugar: ${state.lugar || '(baleiro)'} · Horario: ${state.horario || '(baleiro)'} · Datas: ${state.datas || '(baleiro)'}${state.nota ? ' · Con nota de horarios' : ''}`;
   box.appendChild(conf);
   wizFillChips($('#wiz-view-chips'));
   const ex = $('#wiz-rev-extra');
@@ -3464,6 +3628,7 @@ function avisosFor(keys){
     const ratio = 1.05 / (relLuminance(rgb) + 0.05);
     if(ratio < 4.5) avisos.push(`A cor de acento dá un contraste de ${ratio.toFixed(2).replace('.', ',')}:1 co texto branco (mínimo recomendado 4,5:1): o texto pode custar de ler.`);
   }
+  if(keys.some(k => ['square','story','xformat'].includes(k))){ const sa = sesionesAviso(); if(sa) avisos.push(sa); }
   return avisos;
 }
 function confirmAvisos(avisos){
