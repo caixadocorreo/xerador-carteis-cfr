@@ -1236,7 +1236,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
       <h3>Varias datas con horarios distintos</h3>
       <p>Con dúas ou máis datas soltas hai dúas opcións, que non se poden usar á vez. <strong>Engadir nota de horarios</strong> pon no cartel unha liña pequena: «Pode haber sesións con diferente horario e duración. Para +info consulte os detalles da actividade en FPROFE.» <strong>Horario distinto por día</strong> permite poñer un horario a cada data; o cartel agrupa as datas co mesmo horario e substitúe as liñas de datas e horario. Se hai máis de 4 liñas avisa de que pode non caber. Aplícase a cadrado, story e X. A etiqueta de Moodle e o carrusel non levan datas nin horario.</p>
       <h3>Datos para o carrusel (.csv)</h3>
-      <p>O botón <strong>Descargar datos para o carrusel (.csv)</strong> (paso de descarga do asistente, barra de descarga e sección «Imaxe para o carrusel») xera unha fila coas columnas do Sheet do carrusel: Codigo, Titulo, DataInicio, DataFin, HoraInicio, HoraFin, Lugar, Relatores, ImagenURL e CorFondo. DataInicioVisual e Tipo quedan baleiras. A ligazón de Drive é opcional. CorFondo só se enche se a cor de acento non é o azul corporativo. Sen cabeceira, o ficheiro vale para «Importar → Engadir ás filas» en Google Sheets.</p>
+      <p>O botón <strong>Descargar datos para o carrusel (.csv)</strong> (paso de descarga do asistente, barra de descarga e sección «Imaxe para o carrusel») xera unha fila coas columnas do Sheet do carrusel: Codigo, Titulo, DataInicio, DataFin, HoraInicio, HoraFin, Lugar, Relatores, ImagenURL e CorFondo. DataInicioVisual e Tipo quedan baleiras. A ligazón de Drive é opcional (hai unha axuda plegable «Como compartir a imaxe en Drive» xunto ao campo). CorFondo só se enche se a cor de acento non é o azul corporativo. Sen cabeceira, o ficheiro vale para «Importar → Engadir ás filas» en Google Sheets.</p>
       <h3>Como está organizado o panel (modo experto)</h3>
       <ul>
         <li><strong>🪄 Só o asistente de ilustración</strong>: botón arriba do panel, para crear só a ilustración paso a paso.</li>
@@ -1410,7 +1410,7 @@ https://github.com/nodeca/pako/blob/main/LICENSE
 
 <script>
 // Versión da aplicación: cambiar este número en cada actualización publicada.
-const APP_VERSION = 'v1.9';
+const APP_VERSION = 'v1.10';
 
 const FORMATS = [
   {key:'square', cls:'square', w:1080, h:1080, label:'IG-cadrado'},
@@ -3175,6 +3175,22 @@ function csvDatos(){
   const f = ['', cod, tit, rg ? keyToDmy(rg.ini) : '', rg ? keyToDmy(rg.fin) : '', hi, hf, (state.lugar || '').trim(), rel, link, cor, ''];
   return {fields: f, avisos, infos};
 }
+function makeDriveHelp(){
+  const d = document.createElement('details');
+  d.className = 'pk';
+  d.innerHTML = `<summary style="cursor:pointer;font-size:12.5px;font-weight:600;color:var(--azul-escuro);">Como compartir a imaxe en Drive</summary>
+    <ol style="margin:6px 0 4px 18px;padding:0;font-size:12.5px;line-height:1.5;">
+      <li>Sube a imaxe do carrusel a Drive, á carpeta que use o equipo do carrusel (se hai unha acordada).</li>
+      <li>Fai clic dereito sobre o ficheiro e escolle <b>Compartir</b>.</li>
+      <li>En <b>Acceso xeral</b>, cambia «Restrinxido» a <b>«Calquera persoa que teña a ligazón»</b>.</li>
+      <li>Deixa o permiso como <b>Lector</b> (non lle des permiso de editor).</li>
+      <li>Preme <b>Copiar ligazón</b> e pégaa no campo de arriba.</li>
+    </ol>
+    <div class="hint" style="margin-top:4px;"><b>Comprobación:</b> abre a ligazón nunha ventá de incógnito, sen iniciar sesión. Se se ve a imaxe, está ben compartida.</div>
+    <div class="hint">Se a túa conta é de centro ou de organización, o administrador pode limitar o uso compartido á organización; daquela non aparecerá a opción de «calquera persoa» e hai que preguntarlle a quen xestiona a conta. Non se pode confirmar desde aquí que permiso necesita o carrusel para amosar a imaxe. Se substitúes o ficheiro por outro novo, a ligazón cambia.</div>`;
+  return d;
+}
+$('#in-carrusel-link').nextElementSibling.after(makeDriveHelp());
 function csvQuote(v){ return '"' + String(v).replace(/"/g, '""') + '"'; }
 function csvText(withHeader){
   const rows = [];
@@ -3539,6 +3555,7 @@ function wizFDescarga(body){
   dl.appendChild(cb);
   const lk = cb.querySelector('#wiz-d-link'), hd = cb.querySelector('#wiz-csv-head');
   lk.value = $('#in-carrusel-link').value; hd.checked = $('#chk-csv-header').checked;
+  lk.after(makeDriveHelp());
   const prev = ()=>{
     const d = csvDatos(); const box = cb.querySelector('#wiz-csv-prev'); box.innerHTML = '';
     const t = document.createElement('div'); t.className = 'wiz-res';

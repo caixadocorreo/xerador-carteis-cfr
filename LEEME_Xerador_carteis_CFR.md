@@ -60,6 +60,7 @@ Botón **Descargar datos para o carrusel (.csv)** (paso de descarga do asistente
 | J ImagenURL | a ligazón de Drive do campo opcional (se está baleiro, a columna vai baleira) |
 | K CorFondo | baleira se a cor de acento é o azul corporativo; se non, o hex |
 
+- Xunto ao campo da ligazón hai unha axuda plegable, **«Como compartir a imaxe en Drive»** (panel experto e paso 8 do asistente): subir o ficheiro, «Compartir → Calquera persoa que teña a ligazón → Lector», copiar a ligazón e comprobala nunha ventá de incógnito.
 - Cabeceira: desmarcada por defecto, para «Ficheiro → Importar → Engadir ás filas» en Google Sheets.
 - Avisos: código ou título baleiros, datas ou horas que non se poden ler, ligazón que non empeza por `https://drive.google.com/`.
 - Non podo comprobar os permisos da ligazón de Drive nin como o carrusel interpreta cada columna: convén probar con unha actividade.
@@ -225,7 +226,7 @@ Antes de exportar, se falta a ilustración horizontal (necesaria tamén para o c
 - As **preferencias** (cor de acento, aliñamento, logos) gárdanse á parte do **borrador** (os datos concretos da actividade) — así podes limpar unha actividade sen perder a túa configuración habitual.
 - **⬇ Exportar / ⬆ Importar actividade (.json)**: copia de seguridade ou traslado a outro ordenador ou persoa. Inclúe texto, patróns, axustes, cores e opcións do carrusel; coa caixa «Incluír ilustracións e logos» marcada, tamén as imaxes (o ficheiro pesa máis). Importar substitúe a actividade actual, tras confirmación; se o ficheiro non trae ilustracións, mantéñense as cargadas.
 - **Textos para as redes**: xera un texto alternativo e un texto de publicación a partir dos datos do cartel (código, título, persoas relatoras, lugar, datas e horario), editables e con botón de copiar. Non describen a ilustración.
-- **Versión**: o número (agora v1.9) aparece ao final do panel de edición e na axuda. Para cambialo, edítase a constante `APP_VERSION` no código.
+- **Versión**: o número (agora v1.10) aparece ao final do panel de edición e na axuda. Para cambialo, edítase a constante `APP_VERSION` no código.
 - **Aviso de garda**: o texto e as ilustracións gárdanse por separado. Se as imaxes non caben no almacenamento do navegador, aparece un aviso e o texto gárdase igual. Ao estar a ferramenta publicada, a garda é **por navegador e por enderezo**: non se comparte entre ordenadores; para iso serve o .json.
 - **🗑️ Nova actividade**: limpa código, título, ponentes, lugar, datas, horario, ilustracións e patróns, para empezar unha actividade nova de cero. Pide confirmación antes de borrar. A cor de acento, o aliñamento e os logos cargados **non** se ven afectados.
 
